@@ -1,18 +1,19 @@
 ---
+const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/sound', label: 'Sound' },
-  { href: '/community', label: 'Community' },
-  { href: '/about', label: 'About' },
-  { href: '/connect', label: 'Connect' },
+  { href: `${base}`, label: 'Home' },
+  { href: `${base}sound`, label: 'Sound' },
+  { href: `${base}community`, label: 'Community' },
+  { href: `${base}about`, label: 'About' },
+  { href: `${base}connect`, label: 'Connect' },
 ];
 ---
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-warm-50/90 backdrop-blur-sm border-b border-warm-200/50">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3">
-      <img src="/images/logo.png" alt="Jarin Wadiwalla" class="h-10 w-auto" />
+    <a href={base} class="flex items-center gap-3">
+      <img src={`${base}images/logo.png`} alt="Jarin Wadiwalla" class="h-10 w-auto" />
     </a>
 
     <!-- Desktop nav -->

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="About" description="Jarin Wadiwalla — wellness support for all life stages through Acutonics vibrational sound therapy and community-centered grief work.">
@@ -16,7 +17,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="flex flex-col md:flex-row gap-12 items-start">
         <img
-          src="/images/about-portrait.jpg"
+          src={`${base}images/about-portrait.jpg`}
           alt="Jarin Wadiwalla portrait"
           class="w-full md:w-80 rounded-lg shadow-sm object-cover"
           loading="eager"
@@ -78,7 +79,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="max-w-2xl mx-auto">
       <h2 class="text-3xl text-warm-800 mb-6">Body, heart, and spirit care from adolescence to adulthood.</h2>
       <a
-        href="/connect"
+        href={`${base}connect`}
         class="inline-block px-8 py-3 bg-warm-700 text-white font-body text-sm tracking-wider uppercase rounded-md hover:bg-warm-800 transition-colors"
       >
         Get in Touch

@@ -9,11 +9,13 @@ interface Props {
 }
 
 const { image, imageAlt, title, subtitle, overlay = true, compact = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const imageSrc = image.startsWith('/') ? `${base}${image.slice(1)}` : image;
 ---
 
 <section class:list={['relative flex items-center justify-center overflow-hidden', compact ? 'min-h-[50vh]' : 'min-h-screen']}>
   <img
-    src={image}
+    src={imageSrc}
     alt={imageAlt}
     class="absolute inset-0 w-full h-full object-cover"
     loading="eager"
