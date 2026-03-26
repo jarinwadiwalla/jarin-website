@@ -1,0 +1,12 @@
+{
+  "name": "jarin-website",
+  "compatibility_date": "2026-03-01",
+  "pages_build_output_dir": "./dist",
+  "d1_databases": [
+    {
+      "binding": "SITE_DB",
+      "database_name": "jarin-site",
+      "database_id": "PLACEHOLDER"
+    }
+  ]
+}

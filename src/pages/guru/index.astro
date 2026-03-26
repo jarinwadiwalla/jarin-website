@@ -1,0 +1,752 @@
+---
+import '../../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+    <title>Guru — Jarin Wadiwalla</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: var(--font-body); background: var(--color-warm-50); color: var(--color-warm-900); }
+
+      /* Header */
+      .guru-header { background: linear-gradient(135deg, var(--color-sage-800), var(--color-sage-600)); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+      .guru-header h1 { color: white; font-family: var(--font-sans); font-size: 20px; font-weight: 300; margin: 0; letter-spacing: 0.05em; }
+      .guru-header a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; }
+      .guru-header a:hover { color: white; }
+
+      /* Tab nav */
+      .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--color-warm-200); background: white; overflow-x: auto; position: sticky; top: 56px; z-index: 40; }
+      .tab-btn { padding: 12px 20px; font-family: var(--font-body); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-warm-500); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; transition: color 0.2s, border-color 0.2s; }
+      .tab-btn:hover { color: var(--color-warm-700); }
+      .tab-btn.active { color: var(--color-sage-700); border-bottom-color: var(--color-sage-600); }
+
+      /* Panels */
+      .panel { display: none; padding: 24px; max-width: 960px; margin: 0 auto; }
+      .panel.active { display: block; }
+
+      /* Cards */
+      .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+      .card h2 { font-family: var(--font-sans); font-weight: 300; font-size: 22px; margin: 0 0 16px; color: var(--color-warm-800); }
+
+      /* Forms */
+      .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+      .form-row > * { flex: 1; min-width: 140px; }
+      input, select, textarea { font-family: var(--font-body); font-size: 14px; padding: 10px 14px; border: 1px solid var(--color-warm-200); border-radius: 8px; background: white; color: var(--color-warm-900); width: 100%; }
+      input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-sage-400); box-shadow: 0 0 0 2px rgba(143,156,122,0.2); }
+      textarea { resize: vertical; min-height: 100px; }
+      label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-warm-600); margin-bottom: 4px; }
+
+      /* Buttons */
+      .btn { font-family: var(--font-body); font-size: 13px; font-weight: 600; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
+      .btn:hover { opacity: 0.85; }
+      .btn-primary { background: var(--color-warm-700); color: white; }
+      .btn-sage { background: var(--color-sage-600); color: white; }
+      .btn-danger { background: #c53030; color: white; }
+      .btn-ghost { background: var(--color-warm-100); color: var(--color-warm-700); }
+      .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+      /* Table */
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-warm-500); padding: 8px 12px; border-bottom: 2px solid var(--color-warm-200); }
+      td { padding: 10px 12px; border-bottom: 1px solid var(--color-warm-100); vertical-align: top; }
+      tr:hover td { background: var(--color-warm-50); }
+
+      /* Notes list */
+      .note-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--color-warm-100); }
+      .note-item:last-child { border-bottom: none; }
+      .note-item input[type="checkbox"] { margin-top: 4px; accent-color: var(--color-sage-600); width: 18px; height: 18px; }
+      .note-text { flex: 1; }
+      .note-text.completed { text-decoration: line-through; color: var(--color-warm-400); }
+
+      /* Habits */
+      .habit-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; background: var(--color-warm-50); cursor: pointer; transition: background 0.2s; }
+      .habit-item:hover { background: var(--color-warm-100); }
+      .habit-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-sage-400); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+      .habit-check.done { background: var(--color-sage-600); border-color: var(--color-sage-600); }
+      .habit-check.done::after { content: '\2713'; color: white; font-size: 16px; font-weight: bold; }
+      .habit-name { flex: 1; font-weight: 600; font-size: 15px; }
+      .habit-streak { font-size: 13px; color: var(--color-sage-600); font-weight: 600; }
+      .habit-freq { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-warm-400); }
+      .habit-group-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-warm-500); margin: 20px 0 8px; }
+
+      /* Timer */
+      .timer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+      .timer-card { text-align: center; }
+      .timer-display { font-family: var(--font-sans); font-size: 48px; font-weight: 300; color: var(--color-warm-800); margin: 16px 0; letter-spacing: 0.02em; }
+      .timer-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+      .timer-label { font-size: 12px; color: var(--color-warm-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+      /* Status messages */
+      .status { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+      .status-success { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
+      .status-error { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
+
+      /* Empty state */
+      .empty { text-align: center; padding: 40px 20px; color: var(--color-warm-400); }
+      .empty p { font-size: 15px; }
+
+      /* Responsive */
+      @media (max-width: 640px) {
+        .tab-btn { padding: 10px 14px; font-size: 11px; }
+        .panel { padding: 16px; }
+        .form-row { flex-direction: column; }
+        .form-row > * { min-width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="guru-header">
+      <h1>Guru</h1>
+      <a href="/">Back to site</a>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="finances">Finances</button>
+      <button class="tab-btn" data-tab="blog">Blog</button>
+      <button class="tab-btn" data-tab="newsletter">Newsletter</button>
+      <button class="tab-btn" data-tab="notes">Notes</button>
+      <button class="tab-btn" data-tab="timer">Timer</button>
+      <button class="tab-btn" data-tab="habits">Habits</button>
+    </nav>
+
+    <!-- ═══════════════════════ FINANCES ═══════════════════════ -->
+    <div id="panel-finances" class="panel active">
+      <div class="card">
+        <h2>Add Entry</h2>
+        <div id="finance-status"></div>
+        <form id="finance-form">
+          <div class="form-row">
+            <div><label>Product/Source</label><input name="product" required /></div>
+            <div><label>Amount</label><input name="price" type="text" placeholder="0.00" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Company</label><input name="company" /></div>
+            <div><label>Category</label><input name="category" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Kind</label>
+              <select name="kind"><option value="business">Business</option><option value="personal">Personal</option></select>
+            </div>
+            <div><label>Frequency</label>
+              <select name="frequency"><option value="one-time">One-time</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
+            </div>
+            <div><label>Date</label><input name="date" type="date" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Description</label><input name="description" /></div>
+          </div>
+          <input type="hidden" name="id" />
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-ghost" id="finance-clear">Clear</button>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Entries</h2>
+        <div style="overflow-x:auto;">
+          <table><thead><tr><th>Date</th><th>Product</th><th>Amount</th><th>Category</th><th>Kind</th><th></th></tr></thead>
+          <tbody id="finance-list"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ BLOG ═══════════════════════ -->
+    <div id="panel-blog" class="panel">
+      <div class="card">
+        <h2>Write / Edit Draft</h2>
+        <div id="blog-status"></div>
+        <form id="blog-form">
+          <div class="form-row">
+            <div><label>Title</label><input name="title" required /></div>
+            <div><label>Slug</label><input name="slug" required placeholder="my-post-slug" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Date</label><input name="date" type="date" /></div>
+            <div><label>Image URL</label><input name="image" /></div>
+          </div>
+          <div><label>Excerpt</label><input name="excerpt" /></div>
+          <div style="margin-top:12px;"><label>Body (Markdown)</label><textarea name="body" rows="12" required></textarea></div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button type="submit" class="btn btn-primary">Save Draft</button>
+            <button type="button" class="btn btn-sage" id="blog-publish-btn">Publish</button>
+            <button type="button" class="btn btn-ghost" id="blog-clear">Clear</button>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Drafts</h2>
+        <div id="blog-drafts-list"></div>
+      </div>
+      <div class="card">
+        <h2>Published Posts</h2>
+        <div id="blog-posts-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ NEWSLETTER ═══════════════════════ -->
+    <div id="panel-newsletter" class="panel">
+      <div class="card">
+        <h2>Send Newsletter</h2>
+        <div id="newsletter-status"></div>
+        <form id="newsletter-form">
+          <div><label>Subject</label><input name="subject" required /></div>
+          <div style="margin-top:12px;"><label>HTML Body</label><textarea name="htmlBody" rows="12" required placeholder="Use {{firstName}}, {{lastName}}, {{email}}, {{unsubscribeUrl}} for personalization"></textarea></div>
+          <div style="margin-top:12px;"><label>Test Email (optional)</label><input name="testEmail" type="email" placeholder="Send test to this email first" /></div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button type="button" class="btn btn-ghost" id="newsletter-test-btn">Send Test</button>
+            <button type="submit" class="btn btn-primary">Send to All Subscribers</button>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Subscribers</h2>
+        <div id="subscribers-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ NOTES ═══════════════════════ -->
+    <div id="panel-notes" class="panel">
+      <div class="card">
+        <h2>Notes</h2>
+        <div id="notes-status"></div>
+        <form id="note-form" style="display:flex;gap:8px;margin-bottom:16px;">
+          <input name="text" placeholder="Add a note..." style="flex:1;" required />
+          <input type="hidden" name="id" />
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <div id="notes-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ TIMER ═══════════════════════ -->
+    <div id="panel-timer" class="panel">
+      <div class="timer-grid">
+        <div class="card timer-card">
+          <div class="timer-label">Meditation</div>
+          <div class="timer-display" id="med-display">10:00</div>
+          <div style="margin-bottom:12px;">
+            <label>Minutes</label>
+            <input type="number" id="med-minutes" value="10" min="1" max="120" style="width:80px;text-align:center;" />
+          </div>
+          <div class="timer-controls">
+            <button class="btn btn-sage btn-sm" id="med-start">Start</button>
+            <button class="btn btn-ghost btn-sm" id="med-reset">Reset</button>
+          </div>
+        </div>
+        <div class="card timer-card">
+          <div class="timer-label">Pomodoro</div>
+          <div class="timer-display" id="pom-display">25:00</div>
+          <div style="margin-bottom:12px;">
+            <span id="pom-phase" style="font-size:13px;color:var(--color-sage-600);font-weight:600;">WORK</span>
+          </div>
+          <div class="timer-controls">
+            <button class="btn btn-sage btn-sm" id="pom-start">Start</button>
+            <button class="btn btn-ghost btn-sm" id="pom-reset">Reset</button>
+          </div>
+        </div>
+        <div class="card timer-card">
+          <div class="timer-label">Stopwatch</div>
+          <div class="timer-display" id="sw-display">00:00.00</div>
+          <div class="timer-controls">
+            <button class="btn btn-sage btn-sm" id="sw-start">Start</button>
+            <button class="btn btn-ghost btn-sm" id="sw-lap">Lap</button>
+            <button class="btn btn-ghost btn-sm" id="sw-reset">Reset</button>
+          </div>
+          <div id="sw-laps" style="margin-top:12px;font-size:13px;color:var(--color-warm-600);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ HABITS ═══════════════════════ -->
+    <div id="panel-habits" class="panel">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h2 style="margin:0;">Today's Habits</h2>
+          <button class="btn btn-sage btn-sm" id="habit-add-btn">+ Add Habit</button>
+        </div>
+        <div id="habits-status"></div>
+        <div id="habits-list"></div>
+      </div>
+      <div class="card" id="habit-form-card" style="display:none;">
+        <h2>Add / Edit Habit</h2>
+        <form id="habit-form">
+          <div class="form-row">
+            <div><label>Name</label><input name="name" required /></div>
+            <div><label>Frequency</label>
+              <select name="frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div><label>Category</label><input name="category" placeholder="general" /></div>
+            <div><label>Group</label><input name="stackGroup" placeholder="e.g. morning, evening" /></div>
+          </div>
+          <input type="hidden" name="id" />
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-ghost" id="habit-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // ═══════════════════ TAB SWITCHING ═══════════════════
+      const tabs = document.querySelectorAll('.tab-btn');
+      const panels = document.querySelectorAll('.panel');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+          // Load data on tab switch
+          const t = tab.dataset.tab;
+          if (t === 'finances') loadFinances();
+          else if (t === 'blog') { loadDrafts(); loadPosts(); }
+          else if (t === 'newsletter') loadSubscribers();
+          else if (t === 'notes') loadNotes();
+          else if (t === 'habits') loadHabits();
+        });
+      });
+
+      function showStatus(elId, msg, type = 'success') {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        el.innerHTML = `<div class="status status-${type}">${msg}</div>`;
+        setTimeout(() => el.innerHTML = '', 4000);
+      }
+
+      // ═══════════════════ FINANCES ═══════════════════
+      const finForm = document.getElementById('finance-form');
+      const finList = document.getElementById('finance-list');
+      let finEntries = [];
+
+      async function loadFinances() {
+        try {
+          const res = await fetch('/api/finances');
+          const data = await res.json();
+          finEntries = data.entries || [];
+          renderFinances();
+        } catch (e) { finList.innerHTML = '<tr><td colspan="6">Failed to load.</td></tr>'; }
+      }
+
+      function renderFinances() {
+        if (finEntries.length === 0) {
+          finList.innerHTML = '<tr><td colspan="6" class="empty"><p>No entries yet.</p></td></tr>';
+          return;
+        }
+        finList.innerHTML = finEntries.map(e => `<tr>
+          <td>${e.date || '—'}</td>
+          <td>${esc(e.product)}</td>
+          <td>${e.price || '—'}</td>
+          <td>${esc(e.category || '')}</td>
+          <td>${e.kind || ''}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="editFinance('${e.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button>
+          </td>
+        </tr>`).join('');
+      }
+
+      finForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(finForm);
+        const body = Object.fromEntries(fd);
+        if (!body.id) delete body.id;
+        try {
+          const res = await fetch('/api/finances', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { showStatus('finance-status', 'Saved!'); finForm.reset(); loadFinances(); }
+          else showStatus('finance-status', 'Failed to save.', 'error');
+        } catch { showStatus('finance-status', 'Network error.', 'error'); }
+      });
+
+      document.getElementById('finance-clear').addEventListener('click', () => { finForm.reset(); });
+
+      window.editFinance = function(id) {
+        const e = finEntries.find(x => x.id === id);
+        if (!e) return;
+        finForm.product.value = e.product || '';
+        finForm.price.value = e.price || '';
+        finForm.company.value = e.company || '';
+        finForm.category.value = e.category || '';
+        finForm.kind.value = e.kind || 'business';
+        finForm.frequency.value = e.frequency || 'one-time';
+        finForm.date.value = e.date || '';
+        finForm.description.value = e.description || '';
+        finForm.id.value = e.id;
+        finForm.product.focus();
+      };
+
+      window.deleteFinance = async function(id) {
+        if (!confirm('Delete this entry?')) return;
+        await fetch('/api/finances', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+        loadFinances();
+      };
+
+      // ═══════════════════ BLOG ═══════════════════
+      const blogForm = document.getElementById('blog-form');
+
+      async function loadDrafts() {
+        try {
+          const res = await fetch('/api/blog-drafts');
+          const data = await res.json();
+          const drafts = data.drafts || [];
+          const el = document.getElementById('blog-drafts-list');
+          if (drafts.length === 0) { el.innerHTML = '<div class="empty"><p>No drafts.</p></div>'; return; }
+          el.innerHTML = drafts.map(d => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-warm-100);">
+            <div><strong>${esc(d.title)}</strong> <span style="color:var(--color-warm-400);font-size:13px;">${d.slug}</span></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" onclick="editDraft('${esc(d.slug)}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteDraft('${esc(d.slug)}')">Del</button>
+            </div>
+          </div>`).join('');
+        } catch { document.getElementById('blog-drafts-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
+      }
+
+      async function loadPosts() {
+        try {
+          const res = await fetch('/api/blog-posts');
+          const data = await res.json();
+          const posts = data.posts || [];
+          const el = document.getElementById('blog-posts-list');
+          if (posts.length === 0) { el.innerHTML = '<div class="empty"><p>No published posts.</p></div>'; return; }
+          el.innerHTML = posts.map(p => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--color-warm-100);">
+            <div><strong>${esc(p.title)}</strong> <span style="color:var(--color-warm-400);font-size:13px;">${p.date}</span></div>
+            <button class="btn btn-danger btn-sm" onclick="deletePost('${esc(p.slug)}')">Del</button>
+          </div>`).join('');
+        } catch { document.getElementById('blog-posts-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
+      }
+
+      blogForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(blogForm);
+        const draft = Object.fromEntries(fd);
+        try {
+          const res = await fetch('/api/blog-drafts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ draft }) });
+          if (res.ok) { showStatus('blog-status', 'Draft saved!'); loadDrafts(); }
+          else showStatus('blog-status', 'Failed to save draft.', 'error');
+        } catch { showStatus('blog-status', 'Network error.', 'error'); }
+      });
+
+      document.getElementById('blog-publish-btn').addEventListener('click', async () => {
+        const slug = blogForm.slug.value;
+        if (!slug) { showStatus('blog-status', 'Enter a slug first.', 'error'); return; }
+        if (!confirm('Publish this post?')) return;
+        try {
+          const fd = new FormData(blogForm);
+          const body = Object.fromEntries(fd);
+          const res = await fetch('/api/blog-publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { showStatus('blog-status', 'Published!'); blogForm.reset(); loadDrafts(); loadPosts(); }
+          else { const d = await res.json(); showStatus('blog-status', d.error || 'Publish failed.', 'error'); }
+        } catch { showStatus('blog-status', 'Network error.', 'error'); }
+      });
+
+      document.getElementById('blog-clear').addEventListener('click', () => blogForm.reset());
+
+      window.editDraft = async function(slug) {
+        try {
+          const res = await fetch('/api/blog-drafts');
+          const data = await res.json();
+          const d = (data.drafts || []).find(x => x.slug === slug);
+          if (!d) return;
+          blogForm.title.value = d.title;
+          blogForm.slug.value = d.slug;
+          blogForm.date.value = d.date || '';
+          blogForm.image.value = d.image || '';
+          blogForm.excerpt.value = d.excerpt || '';
+          blogForm.body.value = d.body || '';
+        } catch {}
+      };
+
+      window.deleteDraft = async function(slug) {
+        if (!confirm('Delete this draft?')) return;
+        await fetch('/api/blog-drafts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug }) });
+        loadDrafts();
+      };
+
+      window.deletePost = async function(slug) {
+        if (!confirm('Delete this published post from GitHub?')) return;
+        await fetch('/api/blog-posts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug }) });
+        loadPosts();
+      };
+
+      // ═══════════════════ NEWSLETTER ═══════════════════
+      const nlForm = document.getElementById('newsletter-form');
+
+      async function loadSubscribers() {
+        try {
+          const res = await fetch('/api/subscribers');
+          const data = await res.json();
+          const subs = data.subscribers || [];
+          const el = document.getElementById('subscribers-list');
+          const active = subs.filter(s => !s.unsubscribed);
+          if (active.length === 0) { el.innerHTML = '<div class="empty"><p>No subscribers yet.</p></div>'; return; }
+          el.innerHTML = `<p style="margin-bottom:12px;font-size:14px;color:var(--color-warm-600);">${active.length} active subscriber${active.length !== 1 ? 's' : ''}</p>` +
+            active.map(s => `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--color-warm-100);">
+              <div><strong>${esc(s.firstName)} ${esc(s.lastName)}</strong> <span style="color:var(--color-warm-400);font-size:13px;">${esc(s.email)}</span></div>
+              <span style="font-size:12px;color:var(--color-warm-400);">${s.subscribedAt?.slice(0, 10) || ''}</span>
+            </div>`).join('');
+        } catch { document.getElementById('subscribers-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
+      }
+
+      document.getElementById('newsletter-test-btn').addEventListener('click', async () => {
+        const testEmail = nlForm.testEmail.value;
+        if (!testEmail) { showStatus('newsletter-status', 'Enter a test email.', 'error'); return; }
+        const subject = nlForm.subject.value;
+        const htmlBody = nlForm.htmlBody.value;
+        if (!subject || !htmlBody) { showStatus('newsletter-status', 'Subject and body required.', 'error'); return; }
+        try {
+          const res = await fetch('/api/newsletter-send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subject, htmlBody, testEmails: [testEmail] }) });
+          const data = await res.json();
+          showStatus('newsletter-status', data.message || 'Test sent!');
+        } catch { showStatus('newsletter-status', 'Network error.', 'error'); }
+      });
+
+      nlForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        if (!confirm('Send this newsletter to ALL subscribers?')) return;
+        const subject = nlForm.subject.value;
+        const htmlBody = nlForm.htmlBody.value;
+        try {
+          const res = await fetch('/api/newsletter-send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subject, htmlBody }) });
+          const data = await res.json();
+          if (data.success) showStatus('newsletter-status', data.message);
+          else showStatus('newsletter-status', data.message || 'Failed.', 'error');
+        } catch { showStatus('newsletter-status', 'Network error.', 'error'); }
+      });
+
+      // ═══════════════════ NOTES ═══════════════════
+      const noteForm = document.getElementById('note-form');
+      let allNotes = [];
+
+      async function loadNotes() {
+        try {
+          const res = await fetch('/api/notes');
+          const data = await res.json();
+          allNotes = data.notes || [];
+          renderNotes();
+        } catch { document.getElementById('notes-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
+      }
+
+      function renderNotes() {
+        const el = document.getElementById('notes-list');
+        if (allNotes.length === 0) { el.innerHTML = '<div class="empty"><p>No notes yet.</p></div>'; return; }
+        el.innerHTML = allNotes.map(n => `<div class="note-item">
+          <input type="checkbox" ${n.completed ? 'checked' : ''} onchange="toggleNote('${n.id}', this.checked)" />
+          <span class="note-text ${n.completed ? 'completed' : ''}" ondblclick="startEditNote('${n.id}')" id="note-text-${n.id}">${esc(n.text)}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteNote('${n.id}')" style="flex-shrink:0;">Del</button>
+        </div>`).join('');
+      }
+
+      noteForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(noteForm);
+        const body = { text: fd.get('text'), id: fd.get('id') || undefined };
+        if (!body.id) delete body.id;
+        try {
+          await fetch('/api/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          noteForm.reset();
+          loadNotes();
+        } catch { showStatus('notes-status', 'Failed to save.', 'error'); }
+      });
+
+      window.toggleNote = async function(id, completed) {
+        const n = allNotes.find(x => x.id === id);
+        if (!n) return;
+        await fetch('/api/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, text: n.text, completed }) });
+        loadNotes();
+      };
+
+      window.deleteNote = async function(id) {
+        if (!confirm('Delete this note?')) return;
+        await fetch('/api/notes', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+        loadNotes();
+      };
+
+      window.startEditNote = function(id) {
+        const n = allNotes.find(x => x.id === id);
+        if (!n) return;
+        noteForm.text.value = n.text;
+        noteForm.id.value = n.id;
+        noteForm.text.focus();
+      };
+
+      // ═══════════════════ TIMER ═══════════════════
+      // Meditation
+      let medInterval = null, medSeconds = 600, medRunning = false;
+      const medDisplay = document.getElementById('med-display');
+      const medMinInput = document.getElementById('med-minutes');
+      const medStartBtn = document.getElementById('med-start');
+
+      function fmtTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+
+      medMinInput.addEventListener('change', () => { if (!medRunning) { medSeconds = medMinInput.value * 60; medDisplay.textContent = fmtTime(medSeconds); } });
+
+      medStartBtn.addEventListener('click', () => {
+        if (medRunning) { clearInterval(medInterval); medRunning = false; medStartBtn.textContent = 'Start'; return; }
+        medRunning = true; medStartBtn.textContent = 'Pause';
+        medInterval = setInterval(() => {
+          medSeconds--;
+          medDisplay.textContent = fmtTime(medSeconds);
+          if (medSeconds <= 0) { clearInterval(medInterval); medRunning = false; medStartBtn.textContent = 'Start'; alert('Meditation complete!'); }
+        }, 1000);
+      });
+
+      document.getElementById('med-reset').addEventListener('click', () => {
+        clearInterval(medInterval); medRunning = false; medStartBtn.textContent = 'Start';
+        medSeconds = medMinInput.value * 60; medDisplay.textContent = fmtTime(medSeconds);
+      });
+
+      // Pomodoro
+      let pomInterval = null, pomSeconds = 1500, pomRunning = false, pomWork = true;
+      const pomDisplay = document.getElementById('pom-display');
+      const pomPhase = document.getElementById('pom-phase');
+      const pomStartBtn = document.getElementById('pom-start');
+
+      pomStartBtn.addEventListener('click', () => {
+        if (pomRunning) { clearInterval(pomInterval); pomRunning = false; pomStartBtn.textContent = 'Start'; return; }
+        pomRunning = true; pomStartBtn.textContent = 'Pause';
+        pomInterval = setInterval(() => {
+          pomSeconds--;
+          pomDisplay.textContent = fmtTime(pomSeconds);
+          if (pomSeconds <= 0) {
+            clearInterval(pomInterval); pomRunning = false; pomStartBtn.textContent = 'Start';
+            pomWork = !pomWork;
+            pomSeconds = pomWork ? 1500 : 300;
+            pomPhase.textContent = pomWork ? 'WORK' : 'BREAK';
+            pomDisplay.textContent = fmtTime(pomSeconds);
+            alert(pomWork ? 'Break over — back to work!' : 'Work session done — take a break!');
+          }
+        }, 1000);
+      });
+
+      document.getElementById('pom-reset').addEventListener('click', () => {
+        clearInterval(pomInterval); pomRunning = false; pomStartBtn.textContent = 'Start';
+        pomWork = true; pomSeconds = 1500; pomDisplay.textContent = '25:00'; pomPhase.textContent = 'WORK';
+      });
+
+      // Stopwatch
+      let swInterval = null, swMs = 0, swRunning = false, swLaps = [];
+      const swDisplay = document.getElementById('sw-display');
+      const swStartBtn = document.getElementById('sw-start');
+
+      function fmtSw(ms) {
+        const min = String(Math.floor(ms / 60000)).padStart(2, '0');
+        const sec = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+        const cs = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+        return `${min}:${sec}.${cs}`;
+      }
+
+      swStartBtn.addEventListener('click', () => {
+        if (swRunning) { clearInterval(swInterval); swRunning = false; swStartBtn.textContent = 'Start'; return; }
+        swRunning = true; swStartBtn.textContent = 'Pause';
+        const start = Date.now() - swMs;
+        swInterval = setInterval(() => { swMs = Date.now() - start; swDisplay.textContent = fmtSw(swMs); }, 10);
+      });
+
+      document.getElementById('sw-lap').addEventListener('click', () => {
+        if (!swRunning) return;
+        swLaps.push(fmtSw(swMs));
+        document.getElementById('sw-laps').innerHTML = swLaps.map((l, i) => `<div>Lap ${i + 1}: ${l}</div>`).reverse().join('');
+      });
+
+      document.getElementById('sw-reset').addEventListener('click', () => {
+        clearInterval(swInterval); swRunning = false; swStartBtn.textContent = 'Start';
+        swMs = 0; swDisplay.textContent = '00:00.00'; swLaps = [];
+        document.getElementById('sw-laps').innerHTML = '';
+      });
+
+      // ═══════════════════ HABITS ═══════════════════
+      const habitForm = document.getElementById('habit-form');
+      const habitFormCard = document.getElementById('habit-form-card');
+      let allHabits = [], todayLogs = [];
+
+      function clientToday() { return new Date().toISOString().slice(0, 10); }
+
+      async function loadHabits() {
+        try {
+          const today = clientToday();
+          const res = await fetch('/api/habits?today=' + today);
+          const data = await res.json();
+          allHabits = (data.habits || []).filter(h => h.status === 'active');
+          todayLogs = data.todayLogs || [];
+          renderHabits();
+        } catch { document.getElementById('habits-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
+      }
+
+      function renderHabits() {
+        const el = document.getElementById('habits-list');
+        if (allHabits.length === 0) { el.innerHTML = '<div class="empty"><p>No habits yet. Add one above!</p></div>'; return; }
+        const groups = {};
+        allHabits.forEach(h => { const g = h.stackGroup || 'General'; if (!groups[g]) groups[g] = []; groups[g].push(h); });
+        let html = '';
+        for (const [group, habits] of Object.entries(groups)) {
+          html += `<div class="habit-group-label">${esc(group)}</div>`;
+          habits.forEach(h => {
+            const done = todayLogs.some(l => l.habitId === h.id);
+            html += `<div class="habit-item" onclick="toggleHabit('${h.id}', ${done})">
+              <div class="habit-check ${done ? 'done' : ''}"></div>
+              <div class="habit-name">${esc(h.name)}</div>
+              <div style="text-align:right;">
+                <div class="habit-streak">${h.currentStreak > 0 ? h.currentStreak + ' streak' : ''}</div>
+                <div class="habit-freq">${h.frequency}</div>
+              </div>
+            </div>`;
+          });
+        }
+        el.innerHTML = html;
+      }
+
+      document.getElementById('habit-add-btn').addEventListener('click', () => {
+        habitFormCard.style.display = 'block';
+        habitForm.reset();
+        habitForm.name.focus();
+      });
+
+      document.getElementById('habit-cancel').addEventListener('click', () => {
+        habitFormCard.style.display = 'none';
+        habitForm.reset();
+      });
+
+      habitForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(habitForm);
+        const body = Object.fromEntries(fd);
+        body.action = 'save';
+        if (!body.id) delete body.id;
+        try {
+          const res = await fetch('/api/habits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { habitFormCard.style.display = 'none'; habitForm.reset(); loadHabits(); }
+          else showStatus('habits-status', 'Failed to save.', 'error');
+        } catch { showStatus('habits-status', 'Network error.', 'error'); }
+      });
+
+      window.toggleHabit = async function(id, currentlyDone) {
+        const action = currentlyDone ? 'uncomplete' : 'complete';
+        const today = clientToday();
+        try {
+          await fetch('/api/habits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, id, today }) });
+          loadHabits();
+        } catch {}
+      };
+
+      // ═══════════════════ HELPERS ═══════════════════
+      function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+      // Load initial tab
+      loadFinances();
+    </script>
+  </body>
+</html>

@@ -11,25 +11,63 @@ const { heading = "Sign-up for news that's good for the soul.", dark = false } =
   <h3 class:list={['text-xl mb-4', dark ? 'text-white' : 'text-warm-800']}>
     {heading}
   </h3>
-  {/* TODO: Connect to Mailchimp, ConvertKit, or preferred email provider */}
-  <form class="flex gap-2" action="#" method="POST">
-    <input
-      type="email"
-      name="email"
-      placeholder="Email Address"
-      required
-      class:list={[
-        'flex-1 px-4 py-3 rounded-md font-body text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition',
-        dark
-          ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50'
-          : 'bg-white border border-warm-200 text-warm-800 placeholder:text-warm-400',
-      ]}
-    />
-    <button
-      type="submit"
-      class="px-6 py-3 bg-warm-700 text-white font-body text-sm tracking-wider uppercase rounded-md hover:bg-warm-800 transition-colors"
-    >
-      Sign Up
-    </button>
+  <form class="space-y-3" id="newsletter-signup-form">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        required
+        class:list={[
+          'flex-1 px-4 py-3 rounded-md font-body text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition',
+          dark
+            ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50'
+            : 'bg-white border border-warm-200 text-warm-800 placeholder:text-warm-400',
+        ]}
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email Address"
+        required
+        class:list={[
+          'flex-1 px-4 py-3 rounded-md font-body text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition',
+          dark
+            ? 'bg-white/10 border border-white/20 text-white placeholder:text-white/50'
+            : 'bg-white border border-warm-200 text-warm-800 placeholder:text-warm-400',
+        ]}
+      />
+    </div>
+    <div class="flex gap-2 items-center">
+      <button
+        type="submit"
+        class="px-6 py-3 bg-warm-700 text-white font-body text-sm tracking-wider uppercase rounded-md hover:bg-warm-800 transition-colors"
+      >
+        Sign Up
+      </button>
+      <span id="newsletter-signup-msg" class="font-body text-sm text-warm-600"></span>
+    </div>
   </form>
 </div>
+
+<script>
+  document.querySelectorAll('#newsletter-signup-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = form.querySelector('#newsletter-signup-msg') || form.parentElement?.querySelector('#newsletter-signup-msg');
+      const fd = new FormData(form);
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName: fd.get('firstName'), email: fd.get('email') }),
+        });
+        const data = await res.json();
+        if (msg) msg.textContent = data.message || 'Subscribed!';
+        if (data.success) form.reset();
+      } catch {
+        if (msg) msg.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  });
+</script>
