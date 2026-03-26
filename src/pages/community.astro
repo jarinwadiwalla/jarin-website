@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<BaseLayout title="Community" description="Waves of Grief Collective community circle — ocean medicine, community connection, and ritual for navigating grief and loss.">
+  <Hero
+    image="/images/community-hero.jpg"
+    imageAlt="Waves of Grief Collective community gathering"
+    title="Waves of Grief Collective™ Community Circle"
+    subtitle="Ocean Medicine. Community Connection. Ritual."
+    compact
+  />
+
+  <!-- Description -->
+  <section class="py-20 px-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="space-y-6 font-body text-warm-700 leading-relaxed">
+        <p>
+          Gather on the second Sunday of each month to navigate grief and loss collectively, build community connections, and discover healing through ocean engagement. This space is designed to normalize grief and facilitate healing within and around ocean environments.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Details grid -->
+  <section class="py-16 px-6 bg-warm-100">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white/70 backdrop-blur-sm rounded-lg p-8">
+          <h3 class="text-xl text-warm-800 mb-4">Circle Details</h3>
+          <dl class="space-y-4 font-body text-warm-700">
+            <div>
+              <dt class="font-semibold text-warm-800">Who</dt>
+              <dd>Anyone experiencing grief of any type — death, divorce, breakups, relocation, pet loss, identity loss, job loss, illness, war, ancestral grief, and undiscovered loss.</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-warm-800">What</dt>
+              <dd>Community Grief Circle</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-warm-800">Where</dt>
+              <dd>Location details provided via email after registration</dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-warm-800">When</dt>
+              <dd>Second Sunday of each month, 9:30–11:30 AM</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="bg-white/70 backdrop-blur-sm rounded-lg p-8">
+          <h3 class="text-xl text-warm-800 mb-4">What to Expect</h3>
+          <p class="font-body text-warm-700 leading-relaxed">
+            Sessions combine grounding exercises (movement, visualization, sound therapy), communal sharing, ritual practices, and optional ocean engagement — watching, listening, or wading according to comfort level.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community image -->
+  <section class="py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      <img
+        src="/images/community-group.jpg"
+        alt="Community grief circle gathering"
+        class="w-full rounded-lg shadow-sm"
+        loading="lazy"
+      />
+    </div>
+  </section>
+
+  <!-- Facilitator -->
+  <section class="py-20 px-6 bg-sage-50">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl text-warm-800 mb-8 text-center">About the Facilitator</h2>
+      <div class="flex flex-col md:flex-row gap-8 items-center">
+        <img
+          src="/images/jarin-portrait.jpg"
+          alt="Jarin Wadiwalla"
+          class="w-48 h-48 rounded-full object-cover"
+          loading="lazy"
+        />
+        <div class="space-y-4 font-body text-warm-700 leading-relaxed">
+          <p>
+            Jarin Wadiwalla is a trained yoga instructor and vibrational tuning fork therapist who creates authentic exploration spaces.
+          </p>
+          <p>
+            After experiencing significant personal loss without community support access, she recognized the urgent need for such resources and became certified through The Waves of Grief Collective™.
+          </p>
+          <p class="italic text-warm-600">
+            "Hold that gentle and safe space for people to connect and be witnessed in their grief, exactly as they are, with love and acceptance."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About WoG -->
+  <section class="py-16 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-body text-warm-700 leading-relaxed mb-8">
+        Waves of Grief Second Sundays is a donation-based, year-round ocean and surf therapy initiative facilitated by The Waves of Grief Collective™ — a community of licensed clinicians, healers, community leaders, and those navigating their own grief. Circles operate globally, offering nature-based therapeutic tools to reduce grief-related isolation.
+      </p>
+      <a
+        href="https://www.wavesofgrief.org/registration"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block px-8 py-3 bg-warm-700 text-white font-body text-sm tracking-wider uppercase rounded-md hover:bg-warm-800 transition-colors"
+      >
+        Register Here
+      </a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ContactForm from '../components/ContactForm.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+---
+
+<BaseLayout title="Connect" description="Get in touch with Jarin Wadiwalla for sound healing sessions, community circles, or general inquiries.">
+  <Hero
+    image="/images/connect-hero.jpg"
+    imageAlt="Connect with Jarin Wadiwalla"
+    compact
+  >
+    <div class="relative z-10 text-center px-6 max-w-3xl">
+      <h1 class="text-4xl md:text-5xl text-white leading-tight mb-4">
+        Connect
+      </h1>
+      <p class="font-body text-lg text-white/90">
+        Body, heart, and spirit care from adolescence to adulthood.
+      </p>
+    </div>
+  </Hero>
+
+  <!-- Contact form -->
+  <section class="py-20 px-6">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-3xl text-warm-800 mb-8 text-center">Get in Touch</h2>
+      <ContactForm />
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="py-20 px-6 bg-warm-100">
+    <div class="max-w-xl mx-auto text-center">
+      <NewsletterSignup />
+    </div>
+  </section>
+</BaseLayout>

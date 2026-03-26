@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+---
+
+<BaseLayout title="Home">
+  <Hero
+    image="/images/hero-home.jpg"
+    imageAlt="Jarin Wadiwalla — sound healing and wellness"
+    title="Support for the lifelong unfolding of the human spirit"
+    subtitle="through Acutonics vibrational sound therapy and community."
+  />
+
+  <!-- Secondary section -->
+  <section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl text-warm-800 mb-8">
+        Body, heart, and spirit care from adolescence to adulthood.
+      </h2>
+      <div class="w-24 h-px bg-warm-300 mx-auto"></div>
+    </div>
+  </section>
+
+  <!-- Newsletter section -->
+  <section class="py-20 px-6 bg-warm-100">
+    <div class="max-w-xl mx-auto text-center">
+      <NewsletterSignup />
+    </div>
+  </section>
+</BaseLayout>

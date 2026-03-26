@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="Jarin Wadiwalla — wellness support for all life stages through Acutonics vibrational sound therapy and community-centered grief work.">
+  <!-- Spacer for fixed nav -->
+  <div class="pt-20"></div>
+
+  <!-- Hero section -->
+  <section class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-4xl md:text-5xl text-warm-800 text-center mb-4 italic">
+        Wellness Support for All Life Stages
+      </h1>
+      <div class="w-24 h-px bg-warm-300 mx-auto mb-16"></div>
+
+      <div class="flex flex-col md:flex-row gap-12 items-start">
+        <img
+          src="/images/about-portrait.jpg"
+          alt="Jarin Wadiwalla portrait"
+          class="w-full md:w-80 rounded-lg shadow-sm object-cover"
+          loading="eager"
+        />
+        <div class="space-y-6 font-body text-warm-700 leading-relaxed">
+          <p>
+            Jarin's professional focus encompasses whole-human development across the lifespan. She facilitates healing through Acutonics vibrational sound therapy and community-centered grief work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Credentials -->
+  <section class="py-20 px-6 bg-warm-100">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl text-warm-800 mb-10 text-center">Credentials & Training</h2>
+      <ul class="space-y-4 font-body text-warm-700">
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>200-hour registered yoga teacher</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>Sound bath facilitation training from <em>The Frequency</em></span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>Associate Acutonics® Practitioner certification from <em>Acutonics® Institute of Integrative Medicine</em></span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>Bachelor of Science in Public Relations, <em>University of Texas at Austin</em></span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>Business Foundations Certificate, <em>University of Texas at Austin</em></span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-sage-500 mt-1">&#9679;</span>
+          <span>Adolescent Studies Diploma, <em>Association Montessori Internationale (AMI)</em></span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Additional Studies -->
+  <section class="py-16 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl text-warm-800 mb-6">Additional Studies</h2>
+      <p class="font-body text-warm-700 leading-relaxed">
+        Continuing education in reiki, lymphatic massage, gua sha, EFT tapping, and other wellness modalities.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-6 bg-sage-50 text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-3xl text-warm-800 mb-6">Body, heart, and spirit care from adolescence to adulthood.</h2>
+      <a
+        href="/connect"
+        class="inline-block px-8 py-3 bg-warm-700 text-white font-body text-sm tracking-wider uppercase rounded-md hover:bg-warm-800 transition-colors"
+      >
+        Get in Touch
+      </a>
+    </div>
+  </section>
+</BaseLayout>

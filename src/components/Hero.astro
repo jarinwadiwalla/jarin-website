@@ -1,0 +1,37 @@
+---
+interface Props {
+  image: string;
+  imageAlt: string;
+  title?: string;
+  subtitle?: string;
+  overlay?: boolean;
+  compact?: boolean;
+}
+
+const { image, imageAlt, title, subtitle, overlay = true, compact = false } = Astro.props;
+---
+
+<section class:list={['relative flex items-center justify-center overflow-hidden', compact ? 'min-h-[50vh]' : 'min-h-screen']}>
+  <img
+    src={image}
+    alt={imageAlt}
+    class="absolute inset-0 w-full h-full object-cover"
+    loading="eager"
+  />
+  {overlay && <div class="absolute inset-0 bg-warm-900/30"></div>}
+  {(title || subtitle) && (
+    <div class="relative z-10 text-center px-6 max-w-3xl">
+      {title && (
+        <h1 class="text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-4">
+          {title}
+        </h1>
+      )}
+      {subtitle && (
+        <p class="font-body text-lg md:text-xl text-white/90">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+  <slot />
+</section>
