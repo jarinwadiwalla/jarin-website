@@ -90,10 +90,6 @@ import '../../styles/global.css';
       .status-success { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
       .status-error { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
 
-      /* Empty state */
-      .empty { text-align: center; padding: 40px 20px; color: var(--color-warm-400); }
-      .empty p { font-size: 15px; }
-
       /* Finance sub-tabs */
       .fin-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid var(--color-warm-200); }
       .fin-tab-btn { padding: 8px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-warm-400); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; transition: all 0.2s; }
@@ -126,6 +122,46 @@ import '../../styles/global.css';
       .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
       .bar-value { width: 80px; font-size: 13px; color: var(--color-warm-600); flex-shrink: 0; }
 
+      /* Compact table density */
+      .compact-table td { padding: 6px 10px; font-size: 13px; }
+      .compact-table th { padding: 6px 10px; }
+
+      /* tfoot */
+      tfoot td { background: var(--color-warm-50); font-weight: 600; border-top: 2px solid var(--color-warm-200); border-bottom: none; }
+
+      /* No-date muted */
+      .no-date { color: var(--color-warm-400); font-style: italic; font-size: 12px; }
+
+      /* Donut chart */
+      .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin: 16px 0; }
+      .donut { width: 180px; height: 180px; border-radius: 50%; position: relative; flex-shrink: 0; }
+      .donut-hole { position: absolute; top: 30px; left: 30px; width: 120px; height: 120px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+      .donut-hole .donut-total { font-family: var(--font-sans); font-size: 20px; font-weight: 300; color: var(--color-warm-800); }
+      .donut-hole .donut-label { font-size: 11px; color: var(--color-warm-500); text-transform: uppercase; letter-spacing: 0.05em; }
+      .donut-legend { display: flex; flex-direction: column; gap: 6px; }
+      .donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+      .donut-legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+      .donut-legend-pct { color: var(--color-warm-500); font-size: 12px; min-width: 36px; }
+
+      /* Monthly trend bars */
+      .trend-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+      .trend-month { width: 60px; font-size: 12px; font-weight: 600; color: var(--color-warm-600); text-align: right; flex-shrink: 0; }
+      .trend-track { flex: 1; height: 24px; background: var(--color-warm-100); border-radius: 4px; overflow: hidden; position: relative; }
+      .trend-fill { height: 100%; border-radius: 4px; background: var(--color-sage-500); transition: width 0.4s ease; }
+      .trend-value { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: var(--color-warm-700); }
+
+      /* Month-over-month card */
+      .mom-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; padding: 16px; background: var(--color-warm-50); border-radius: 10px; margin: 16px 0; }
+      .mom-stat { text-align: center; }
+      .mom-stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-warm-500); margin-bottom: 2px; }
+      .mom-stat .value { font-family: var(--font-sans); font-size: 22px; font-weight: 300; color: var(--color-warm-800); }
+      .mom-stat .change-up { color: #c53030; }
+      .mom-stat .change-down { color: var(--color-sage-600); }
+
+      /* Better empty state */
+      .empty { text-align: center; padding: 32px 20px; color: var(--color-warm-400); background: var(--color-warm-50); border-radius: 8px; }
+      .empty p { font-size: 14px; margin: 0; }
+
       /* Responsive */
       @media (max-width: 640px) {
         .tab-btn { padding: 10px 14px; font-size: 11px; }
@@ -135,6 +171,12 @@ import '../../styles/global.css';
         .fin-tab-btn { padding: 6px 10px; font-size: 11px; }
         .summary-grid { grid-template-columns: 1fr 1fr; }
         .bar-label { width: 70px; font-size: 12px; }
+        .donut-wrap { justify-content: center; }
+        .donut { width: 150px; height: 150px; }
+        .donut-hole { top: 25px; left: 25px; width: 100px; height: 100px; }
+        .donut-hole .donut-total { font-size: 16px; }
+        .mom-card { grid-template-columns: 1fr 1fr; }
+        .trend-month { width: 44px; font-size: 11px; }
       }
     </style>
   </head>
@@ -187,7 +229,7 @@ import '../../styles/global.css';
         <div class="card">
           <div class="summary-grid">
             <div class="summary-card"><div class="label">This Month (USD)</div><div class="value" id="fin-exp-month-usd">$0</div></div>
-            <div class="summary-card"><div class="label">This Month (IDR)</div><div class="value" id="fin-exp-month-idr">Rp 0</div></div>
+            <div class="summary-card"><div class="label">Entry Count</div><div class="value" id="fin-exp-month-count">0</div></div>
           </div>
           <div class="month-btns" id="fin-exp-months"></div>
           <h2>Add Expense</h2>
@@ -201,12 +243,14 @@ import '../../styles/global.css';
               <div><label>Description</label><input name="product" required /></div>
               <div><label>Category</label>
                 <select name="category">
-                  <option value="groceries">Groceries</option><option value="restaurant">Restaurant</option>
-                  <option value="rent">Rent</option><option value="health">Health</option>
-                  <option value="travel">Travel</option><option value="education">Education</option>
-                  <option value="transport">Transport</option><option value="utilities">Utilities</option>
-                  <option value="entertainment">Entertainment</option><option value="shopping">Shopping</option>
-                  <option value="other">Other</option>
+                  <option value="Bills">Bills</option><option value="Coffee Shop">Coffee Shop</option>
+                  <option value="Data">Data</option><option value="Debt">Debt</option>
+                  <option value="Dining Out">Dining Out</option><option value="Electricity">Electricity</option>
+                  <option value="Extras">Extras</option><option value="Fitness">Fitness</option>
+                  <option value="Gojek">Gojek</option><option value="Groceries">Groceries</option>
+                  <option value="Laundry">Laundry</option><option value="Self-Care">Self-Care</option>
+                  <option value="Shopping">Shopping</option><option value="Transportation">Transportation</option>
+                  <option value="Travel">Travel</option><option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -223,8 +267,8 @@ import '../../styles/global.css';
         </div>
         <div class="card">
           <h2>Expense History</h2>
-          <div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>USD</th><th>IDR</th><th>Description</th><th>Category</th><th>Place</th><th></th></tr></thead>
-          <tbody id="fin-exp-list"></tbody></table></div>
+          <div style="overflow-x:auto;"><table class="compact-table"><thead><tr><th>Date</th><th>Amount</th><th>Description</th><th>Category</th><th></th></tr></thead>
+          <tbody id="fin-exp-list"></tbody><tfoot id="fin-exp-foot"></tfoot></table></div>
         </div>
       </div>
 
@@ -273,6 +317,7 @@ import '../../styles/global.css';
           <div class="summary-grid">
             <div class="summary-card"><div class="label">Monthly Total</div><div class="value" id="fin-biz-monthly">$0</div></div>
             <div class="summary-card"><div class="label">Yearly Total</div><div class="value" id="fin-biz-yearly">$0</div></div>
+            <div class="summary-card"><div class="label">One-Time Total</div><div class="value" id="fin-biz-onetime-total">$0</div></div>
             <div class="summary-card"><div class="label">Annualized</div><div class="value" id="fin-biz-annual">$0</div></div>
           </div>
           <h2>Add Business Expense</h2>
@@ -540,12 +585,27 @@ import '../../styles/global.css';
 
       // ── Month button builder ──
       function buildMonthBtns(entries, containerId, filterVar, setFn) {
-        const months = [...new Set(entries.map(e => (e.date || '').slice(0, 7)).filter(Boolean))].sort().reverse();
+        const months = {};
+        let undatedCount = 0;
+        entries.forEach(e => {
+          const m = (e.date || '').slice(0, 7);
+          if (m) months[m] = (months[m] || 0) + 1;
+          else undatedCount++;
+        });
+        const sorted = Object.keys(months).sort().reverse();
         const el = document.getElementById(containerId);
-        if (months.length <= 1) { el.innerHTML = ''; return; }
+        if (sorted.length <= 1 && undatedCount === 0) { el.innerHTML = ''; return; }
         const current = filterVar || '';
-        el.innerHTML = `<button class="month-btn ${!current ? 'active' : ''}" onclick="${setFn}('')">All</button>` +
-          months.map(m => `<button class="month-btn ${current === m ? 'active' : ''}" onclick="${setFn}('${m}')">${m}</button>`).join('');
+        const allCount = entries.length;
+        let html = `<button class="month-btn ${!current ? 'active' : ''}" onclick="${setFn}('')">All (${allCount})</button>`;
+        html += sorted.map(m => {
+          const label = m.slice(5) + '/' + m.slice(2, 4);
+          return `<button class="month-btn ${current === m ? 'active' : ''}" onclick="${setFn}('${m}')">${label} (${months[m]})</button>`;
+        }).join('');
+        if (undatedCount > 0) {
+          html += `<button class="month-btn ${current === 'undated' ? 'active' : ''}" onclick="${setFn}('undated')">Undated (${undatedCount})</button>`;
+        }
+        el.innerHTML = html;
       }
 
       // ── EXPENSES ──
@@ -554,31 +614,50 @@ import '../../styles/global.css';
       function renderExpenses() {
         const exp = finEntries.filter(e => e.kind === 'expense');
         const thisMonth = new Date().toISOString().slice(0, 7);
-        const displayMonth = finExpMonthFilter || thisMonth;
 
-        // Monthly totals
+        // Summary for current display
+        const displayMonth = finExpMonthFilter && finExpMonthFilter !== 'undated' ? finExpMonthFilter : thisMonth;
         const monthExp = exp.filter(e => (e.date || '').startsWith(displayMonth));
         const monthUSD = monthExp.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
-        const monthIDR = monthExp.reduce((s, e) => s + (parseFloat(e.localAmount) || 0), 0);
         document.getElementById('fin-exp-month-usd').textContent = '$' + monthUSD.toFixed(2);
-        document.getElementById('fin-exp-month-idr').textContent = 'Rp ' + Math.round(monthIDR).toLocaleString('id-ID');
+        document.getElementById('fin-exp-month-count').textContent = monthExp.length;
 
         // Month buttons
         buildMonthBtns(exp, 'fin-exp-months', finExpMonthFilter, 'setExpMonth');
 
-        // Filter & render table
-        const filtered = finExpMonthFilter ? exp.filter(e => (e.date || '').startsWith(finExpMonthFilter)) : exp;
+        // Filter
+        let filtered;
+        if (finExpMonthFilter === 'undated') filtered = exp.filter(e => !e.date);
+        else if (finExpMonthFilter) filtered = exp.filter(e => (e.date || '').startsWith(finExpMonthFilter));
+        else filtered = exp;
+
+        // Sort: dated entries descending, undated at bottom
+        filtered.sort((a, b) => {
+          if (a.date && b.date) return b.date.localeCompare(a.date);
+          if (a.date && !b.date) return -1;
+          if (!a.date && b.date) return 1;
+          return 0;
+        });
+
         const el = document.getElementById('fin-exp-list');
-        if (filtered.length === 0) { el.innerHTML = '<tr><td colspan="7" class="empty"><p>No expenses.</p></td></tr>'; return; }
-        el.innerHTML = filtered.map(e => `<tr>
-          <td>${e.date || '—'}</td>
-          <td style="color:#c53030;">$${parseFloat(e.price || 0).toFixed(2)}</td>
-          <td style="color:var(--color-warm-400);">${e.localAmount ? 'Rp ' + Math.round(parseFloat(e.localAmount)).toLocaleString('id-ID') : ''}</td>
+        const foot = document.getElementById('fin-exp-foot');
+        if (filtered.length === 0) {
+          el.innerHTML = '<tr><td colspan="5"><div class="empty"><p>No expenses for this period.</p></div></td></tr>';
+          foot.innerHTML = '';
+          return;
+        }
+        el.innerHTML = filtered.map(e => {
+          const cc = catColor(e.category || 'Other');
+          return `<tr>
+          <td>${e.date ? e.date : '<span class="no-date">no date</span>'}</td>
+          <td style="color:#c53030;font-weight:600;">$${parseFloat(e.price || 0).toFixed(2)}</td>
           <td>${esc(e.product)}</td>
-          <td><span class="cat-badge">${esc(e.category || 'other')}</span></td>
-          <td>${esc(e.company || '')}</td>
+          <td><span class="cat-badge" style="background:${cc.bg};color:${cc.text};">${esc(e.category || 'Other')}</span></td>
           <td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td>
-        </tr>`).join('');
+        </tr>`;
+        }).join('');
+        const totalUSD = filtered.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        foot.innerHTML = `<tr><td>${filtered.length} entries</td><td style="color:#c53030;">$${totalUSD.toFixed(2)}</td><td colspan="3"></td></tr>`;
       }
 
       // ── INCOME ──
@@ -587,7 +666,7 @@ import '../../styles/global.css';
       function renderIncome() {
         const inc = finEntries.filter(e => e.kind === 'income');
         const thisMonth = new Date().toISOString().slice(0, 7);
-        const displayMonth = finIncMonthFilter || thisMonth;
+        const displayMonth = finIncMonthFilter && finIncMonthFilter !== 'undated' ? finIncMonthFilter : thisMonth;
 
         const monthInc = inc.filter(e => (e.date || '').startsWith(displayMonth));
         const monthTotal = monthInc.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
@@ -598,11 +677,15 @@ import '../../styles/global.css';
 
         buildMonthBtns(inc, 'fin-inc-months', finIncMonthFilter, 'setIncMonth');
 
-        const filtered = finIncMonthFilter ? inc.filter(e => (e.date || '').startsWith(finIncMonthFilter)) : inc;
+        let filtered;
+        if (finIncMonthFilter === 'undated') filtered = inc.filter(e => !e.date);
+        else if (finIncMonthFilter) filtered = inc.filter(e => (e.date || '').startsWith(finIncMonthFilter));
+        else filtered = inc;
+
         const el = document.getElementById('fin-inc-list');
-        if (filtered.length === 0) { el.innerHTML = '<tr><td colspan="6" class="empty"><p>No income.</p></td></tr>'; return; }
+        if (filtered.length === 0) { el.innerHTML = '<tr><td colspan="6"><div class="empty"><p>No income for this period.</p></div></td></tr>'; return; }
         el.innerHTML = filtered.map(e => `<tr>
-          <td>${e.date || '—'}</td>
+          <td>${e.date ? e.date : '<span class="no-date">no date</span>'}</td>
           <td style="color:var(--color-sage-600);font-weight:600;">$${parseFloat(e.price || 0).toFixed(2)}</td>
           <td>${esc(e.product)}</td>
           <td><span class="cat-badge">${esc(e.category || 'other')}</span></td>
@@ -618,32 +701,42 @@ import '../../styles/global.css';
         const biz = finEntries.filter(e => (e.kind || 'business') === 'business');
         const bizMonthly = biz.filter(e => e.frequency === 'monthly');
         const bizYearly = biz.filter(e => e.frequency === 'yearly');
-        const oneTime = finEntries.filter(e => e.kind === 'expense' && e.category === 'business');
+        // Fix: capture both (kind=expense && category=business) AND (kind=business && frequency=one-time)
+        const oneTime = finEntries.filter(e =>
+          (e.kind === 'expense' && e.category === 'business') ||
+          (e.kind === 'business' && e.frequency === 'one-time')
+        );
 
         const moTotal = bizMonthly.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
         const yrTotal = bizYearly.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const otAllTotal = oneTime.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
         document.getElementById('fin-biz-monthly').textContent = '$' + moTotal.toFixed(2);
         document.getElementById('fin-biz-yearly').textContent = '$' + yrTotal.toFixed(2);
+        document.getElementById('fin-biz-onetime-total').textContent = '$' + otAllTotal.toFixed(2);
         document.getElementById('fin-biz-annual').textContent = '$' + ((moTotal * 12) + yrTotal).toFixed(2);
 
         // Monthly recurring table
         const moEl = document.getElementById('fin-biz-monthly-list');
-        moEl.innerHTML = bizMonthly.length === 0 ? '<tr><td colspan="6" class="empty"><p>None.</p></td></tr>' :
+        moEl.innerHTML = bizMonthly.length === 0 ? '<tr><td colspan="6"><div class="empty"><p>No monthly recurring expenses.</p></div></td></tr>' :
           bizMonthly.map(e => `<tr><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td>${esc(e.businessUseCase || '')}</td><td>${esc(e.recurringDate || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('');
 
         // Yearly recurring table
         const yrEl = document.getElementById('fin-biz-yearly-list');
-        yrEl.innerHTML = bizYearly.length === 0 ? '<tr><td colspan="6" class="empty"><p>None.</p></td></tr>' :
+        yrEl.innerHTML = bizYearly.length === 0 ? '<tr><td colspan="6"><div class="empty"><p>No yearly recurring expenses.</p></div></td></tr>' :
           bizYearly.map(e => `<tr><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td>${esc(e.businessUseCase || '')}</td><td>${esc(e.recurringDate || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('');
 
         // One-time business expenses
         buildMonthBtns(oneTime, 'fin-biz-months', finBizMonthFilter, 'setBizMonth');
-        const filteredOT = finBizMonthFilter ? oneTime.filter(e => (e.date || '').startsWith(finBizMonthFilter)) : oneTime;
+        let filteredOT;
+        if (finBizMonthFilter === 'undated') filteredOT = oneTime.filter(e => !e.date);
+        else if (finBizMonthFilter) filteredOT = oneTime.filter(e => (e.date || '').startsWith(finBizMonthFilter));
+        else filteredOT = oneTime;
+
         const otEl = document.getElementById('fin-biz-onetime-list');
-        if (filteredOT.length === 0) { otEl.innerHTML = '<tr><td colspan="5" class="empty"><p>None.</p></td></tr>'; return; }
-        const otTotal = filteredOT.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
-        otEl.innerHTML = filteredOT.map(e => `<tr><td>${e.date || '—'}</td><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('') +
-          `<tr style="font-weight:600;border-top:2px solid var(--color-warm-200);"><td></td><td>$${otTotal.toFixed(2)}</td><td colspan="3">Total</td></tr>`;
+        if (filteredOT.length === 0) { otEl.innerHTML = '<tr><td colspan="5"><div class="empty"><p>No one-time business expenses.</p></div></td></tr>'; return; }
+        const otFilteredTotal = filteredOT.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        otEl.innerHTML = filteredOT.map(e => `<tr><td>${e.date ? e.date : '<span class="no-date">no date</span>'}</td><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('') +
+          `<tr style="font-weight:600;border-top:2px solid var(--color-warm-200);"><td></td><td>$${otFilteredTotal.toFixed(2)}</td><td colspan="3">Total (${filteredOT.length} entries)</td></tr>`;
       }
 
       // ── ANALYSIS ──
@@ -654,11 +747,31 @@ import '../../styles/global.css';
         renderAnalysis();
       });
 
-      const BAR_COLORS = ['#7d5f52','#576447','#a18072','#8f9c7a','#bfa094','#6f7d5b','#d2bab0','#434d37','#e0cec7','#333b2a'];
+      const CATEGORY_COLORS = {
+        'Bills':          { bg: '#fef3c7', text: '#92400e', fill: '#d97706' },
+        'Coffee Shop':    { bg: '#f5e6d3', text: '#7d5f52', fill: '#a18072' },
+        'Data':           { bg: '#e0e7ff', text: '#3730a3', fill: '#6366f1' },
+        'Debt':           { bg: '#fee2e2', text: '#991b1b', fill: '#dc2626' },
+        'Dining Out':     { bg: '#fce7f3', text: '#9d174d', fill: '#db2777' },
+        'Electricity':    { bg: '#fef9c3', text: '#854d0e', fill: '#ca8a04' },
+        'Extras':         { bg: '#f3e8ff', text: '#6b21a8', fill: '#9333ea' },
+        'Fitness':        { bg: '#d1fae5', text: '#065f46', fill: '#059669' },
+        'Gojek':          { bg: '#dcfce7', text: '#166534', fill: '#16a34a' },
+        'Groceries':      { bg: '#e8eadc', text: '#434d37', fill: '#576447' },
+        'Laundry':        { bg: '#e0f2fe', text: '#075985', fill: '#0284c7' },
+        'Self-Care':      { bg: '#fae8ff', text: '#86198f', fill: '#c026d3' },
+        'Shopping':       { bg: '#ffe4e6', text: '#9f1239', fill: '#e11d48' },
+        'Transportation': { bg: '#f0fdf4', text: '#14532d', fill: '#15803d' },
+        'Travel':         { bg: '#ecfeff', text: '#155e75', fill: '#0891b2' },
+        'Other':          { bg: '#f5f5f4', text: '#57534e', fill: '#78716c' },
+      };
+      const FALLBACK_CAT = { bg: '#f5f5f4', text: '#57534e', fill: '#78716c' };
+      function catColor(cat) { return CATEGORY_COLORS[cat] || FALLBACK_CAT; }
 
       function renderAnalysis() {
         const monthFilter = document.getElementById('fin-analysis-month').value || '';
-        const exp = finEntries.filter(e => e.kind === 'expense' && (!monthFilter || (e.date || '').startsWith(monthFilter)));
+        const allExp = finEntries.filter(e => e.kind === 'expense');
+        const exp = allExp.filter(e => !monthFilter || (e.date || '').startsWith(monthFilter));
         const inc = finEntries.filter(e => e.kind === 'income' && (!monthFilter || (e.date || '').startsWith(monthFilter)));
 
         const expTotal = exp.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
@@ -669,49 +782,125 @@ import '../../styles/global.css';
         document.getElementById('fin-analysis-summary').innerHTML = `
           <div class="summary-card"><div class="label">Total Expenses</div><div class="value negative">$${expTotal.toFixed(2)}</div></div>
           <div class="summary-card"><div class="label">Total Income</div><div class="value positive">$${incTotal.toFixed(2)}</div></div>
-          <div class="summary-card"><div class="label">Net</div><div class="value ${net >= 0 ? 'positive' : 'negative'}">$${net.toFixed(2)}</div></div>`;
+          <div class="summary-card"><div class="label">Net</div><div class="value ${net >= 0 ? 'positive' : 'negative'}">$${net.toFixed(2)}</div></div>
+          <div class="summary-card"><div class="label">Entries</div><div class="value">${exp.length + inc.length}</div></div>`;
 
         let html = '';
 
-        // Expense by category
+        // ── Donut chart + category bars ──
         if (exp.length > 0) {
           const byCat = {};
-          exp.forEach(e => { const c = e.category || 'other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
+          exp.forEach(e => { const c = e.category || 'Other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
           const sorted = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
           const maxCat = sorted[0]?.[1] || 1;
-          html += '<h2 style="margin-top:24px;">Expense Categories</h2>';
-          sorted.forEach(([cat, total], i) => {
+
+          // Build conic-gradient
+          let angle = 0;
+          const gradParts = [];
+          sorted.forEach(([cat, total]) => {
+            const cc = catColor(cat);
+            const slice = (total / expTotal) * 360;
+            gradParts.push(`${cc.fill} ${angle}deg ${angle + slice}deg`);
+            angle += slice;
+          });
+          const gradient = `conic-gradient(${gradParts.join(', ')})`;
+
+          // Legend
+          const legendItems = sorted.map(([cat, total]) => {
+            const cc = catColor(cat);
             const pct = ((total / expTotal) * 100).toFixed(0);
-            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${BAR_COLORS[i % BAR_COLORS.length]};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
+            return `<div class="donut-legend-item"><div class="donut-legend-swatch" style="background:${cc.fill};"></div><span>${cat}</span><span class="donut-legend-pct">${pct}%</span></div>`;
+          }).join('');
+
+          html += '<h2 style="margin-top:24px;">Expense Categories</h2>';
+          html += `<div class="donut-wrap">
+            <div class="donut" style="background:${gradient};">
+              <div class="donut-hole"><div class="donut-total">$${expTotal.toFixed(0)}</div><div class="donut-label">Total</div></div>
+            </div>
+            <div class="donut-legend">${legendItems}</div>
+          </div>`;
+
+          // Category bars with per-category colors
+          sorted.forEach(([cat, total]) => {
+            const cc = catColor(cat);
+            const pct = ((total / expTotal) * 100).toFixed(0);
+            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${cc.fill};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
           });
         }
 
-        // Top vendors
+        // ── Month-over-month card (when viewing a specific month) ──
+        if (monthFilter && exp.length > 0) {
+          const avgPerEntry = expTotal / exp.length;
+          const topCat = Object.entries(exp.reduce((acc, e) => { const c = e.category || 'Other'; acc[c] = (acc[c] || 0) + (parseFloat(e.price) || 0); return acc; }, {})).sort((a, b) => b[1] - a[1])[0];
+
+          // Previous month
+          const [yr, mo] = monthFilter.split('-').map(Number);
+          const prevMo = mo === 1 ? `${yr-1}-12` : `${yr}-${String(mo-1).padStart(2,'0')}`;
+          const prevExp = allExp.filter(e => (e.date || '').startsWith(prevMo));
+          const prevTotal = prevExp.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+          const pctChange = prevTotal > 0 ? (((expTotal - prevTotal) / prevTotal) * 100).toFixed(0) : null;
+
+          html += '<h2 style="margin-top:24px;">Month Summary</h2>';
+          html += '<div class="mom-card">';
+          html += `<div class="mom-stat"><div class="label">Total</div><div class="value">$${expTotal.toFixed(0)}</div></div>`;
+          html += `<div class="mom-stat"><div class="label">Entries</div><div class="value">${exp.length}</div></div>`;
+          html += `<div class="mom-stat"><div class="label">Avg/Entry</div><div class="value">$${avgPerEntry.toFixed(0)}</div></div>`;
+          if (topCat) html += `<div class="mom-stat"><div class="label">Top Category</div><div class="value" style="font-size:16px;">${topCat[0]}</div></div>`;
+          if (pctChange !== null) {
+            const cls = Number(pctChange) > 0 ? 'change-up' : 'change-down';
+            const arrow = Number(pctChange) > 0 ? '\u2191' : '\u2193';
+            html += `<div class="mom-stat"><div class="label">vs ${prevMo}</div><div class="value ${cls}">${arrow} ${Math.abs(pctChange)}%</div></div>`;
+          }
+          html += '</div>';
+        }
+
+        // ── Monthly spend trend ──
+        if (allExp.length > 0) {
+          const byMonth = {};
+          allExp.forEach(e => {
+            const m = (e.date || '').slice(0, 7);
+            if (m) byMonth[m] = (byMonth[m] || 0) + (parseFloat(e.price) || 0);
+          });
+          const monthsSorted = Object.keys(byMonth).sort();
+          if (monthsSorted.length > 1) {
+            const maxMonth = Math.max(...Object.values(byMonth));
+            html += '<h2 style="margin-top:24px;">Monthly Spend Trend</h2>';
+            monthsSorted.forEach(m => {
+              const total = byMonth[m];
+              const label = m.slice(5) + '/' + m.slice(2, 4);
+              const isActive = m === monthFilter;
+              const fillColor = isActive ? 'var(--color-sage-700)' : 'var(--color-sage-400)';
+              html += `<div class="trend-row"><div class="trend-month">${label}</div><div class="trend-track"><div class="trend-fill" style="width:${(total/maxMonth)*100}%;background:${fillColor};"></div><div class="trend-value">$${total.toFixed(0)}</div></div></div>`;
+            });
+          }
+        }
+
+        // ── Top Expenses (by product field) ──
         if (exp.length > 0) {
-          const byVendor = {};
-          exp.forEach(e => { const v = (e.company || 'Unknown').toLowerCase(); byVendor[v] = (byVendor[v] || 0) + (parseFloat(e.price) || 0); });
-          const topV = Object.entries(byVendor).sort((a, b) => b[1] - a[1]).slice(0, 10);
-          html += '<h2 style="margin-top:24px;">Top Vendors</h2><table><thead><tr><th>#</th><th>Place</th><th>Total</th><th>%</th></tr></thead><tbody>';
-          topV.forEach(([v, total], i) => {
-            html += `<tr><td>${i+1}</td><td>${esc(v)}</td><td>$${total.toFixed(2)}</td><td>${((total/expTotal)*100).toFixed(0)}%</td></tr>`;
+          const byProduct = {};
+          exp.forEach(e => { const p = e.product || 'Unknown'; byProduct[p] = (byProduct[p] || 0) + (parseFloat(e.price) || 0); });
+          const topP = Object.entries(byProduct).sort((a, b) => b[1] - a[1]).slice(0, 15);
+          html += '<h2 style="margin-top:24px;">Top Expenses</h2><table class="compact-table"><thead><tr><th>#</th><th>Item</th><th>Total</th><th>%</th></tr></thead><tbody>';
+          topP.forEach(([p, total], i) => {
+            html += `<tr><td>${i+1}</td><td>${esc(p)}</td><td>$${total.toFixed(2)}</td><td>${((total/expTotal)*100).toFixed(0)}%</td></tr>`;
           });
           html += '</tbody></table>';
         }
 
-        // Income by category
+        // ── Income by category ──
         if (inc.length > 0) {
           const byCat = {};
           inc.forEach(e => { const c = e.category || 'other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
           const sorted = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
           const maxCat = sorted[0]?.[1] || 1;
           html += '<h2 style="margin-top:24px;">Income Categories</h2>';
-          sorted.forEach(([cat, total], i) => {
+          sorted.forEach(([cat, total]) => {
             const pct = ((total / incTotal) * 100).toFixed(0);
-            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${BAR_COLORS[(i+5) % BAR_COLORS.length]};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
+            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:var(--color-sage-500);"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
           });
         }
 
-        // Business context
+        // ── Business overhead ──
         const biz = finEntries.filter(e => (e.kind || 'business') === 'business');
         if (biz.length > 0) {
           const bizMo = biz.filter(e => e.frequency === 'monthly').reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
@@ -732,10 +921,9 @@ import '../../styles/global.css';
           const fd = new FormData(form);
           const body = Object.fromEntries(fd);
           if (!body.id) delete body.id;
-          // For one-time business, store as expense with business category
+          // For one-time business, keep kind=business with frequency=one-time
           if (kind === 'business' && body.frequency === 'one-time') {
-            body.kind = 'expense';
-            body.category = 'business';
+            body.kind = 'business';
           }
           try {
             const res = await fetch('/api/finances', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
