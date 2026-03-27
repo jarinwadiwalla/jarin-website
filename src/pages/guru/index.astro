@@ -94,12 +94,47 @@ import '../../styles/global.css';
       .empty { text-align: center; padding: 40px 20px; color: var(--color-warm-400); }
       .empty p { font-size: 15px; }
 
+      /* Finance sub-tabs */
+      .fin-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid var(--color-warm-200); }
+      .fin-tab-btn { padding: 8px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-warm-400); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; transition: all 0.2s; }
+      .fin-tab-btn:hover { color: var(--color-warm-600); }
+      .fin-tab-btn.active { color: var(--color-sage-700); border-bottom-color: var(--color-sage-600); }
+      .fin-panel { display: none; }
+      .fin-panel.active { display: block; }
+
+      /* Summary cards */
+      .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+      .summary-card { background: var(--color-warm-50); border-radius: 10px; padding: 16px; text-align: center; }
+      .summary-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-warm-500); margin-bottom: 4px; }
+      .summary-card .value { font-family: var(--font-sans); font-size: 28px; font-weight: 300; color: var(--color-warm-800); }
+      .summary-card .value.positive { color: var(--color-sage-600); }
+      .summary-card .value.negative { color: #c53030; }
+
+      /* Month buttons */
+      .month-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+      .month-btn { padding: 4px 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--color-warm-200); border-radius: 6px; background: white; color: var(--color-warm-600); cursor: pointer; transition: all 0.2s; }
+      .month-btn:hover { border-color: var(--color-sage-400); }
+      .month-btn.active { background: var(--color-sage-600); color: white; border-color: var(--color-sage-600); }
+
+      /* Category badge */
+      .cat-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; background: var(--color-warm-100); color: var(--color-warm-600); }
+
+      /* Analysis bars */
+      .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+      .bar-label { width: 100px; font-size: 13px; color: var(--color-warm-700); text-align: right; flex-shrink: 0; }
+      .bar-track { flex: 1; height: 22px; background: var(--color-warm-100); border-radius: 4px; overflow: hidden; }
+      .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+      .bar-value { width: 80px; font-size: 13px; color: var(--color-warm-600); flex-shrink: 0; }
+
       /* Responsive */
       @media (max-width: 640px) {
         .tab-btn { padding: 10px 14px; font-size: 11px; }
         .panel { padding: 16px; }
         .form-row { flex-direction: column; }
         .form-row > * { min-width: 100%; }
+        .fin-tab-btn { padding: 6px 10px; font-size: 11px; }
+        .summary-grid { grid-template-columns: 1fr 1fr; }
+        .bar-label { width: 70px; font-size: 12px; }
       }
     </style>
   </head>
@@ -122,42 +157,165 @@ import '../../styles/global.css';
 
     <!-- ═══════════════════════ FINANCES ═══════════════════════ -->
     <div id="panel-finances" class="panel active">
-      <div class="card">
-        <h2>Add Entry</h2>
-        <div id="finance-status"></div>
-        <form id="finance-form">
-          <div class="form-row">
-            <div><label>Product/Source</label><input name="product" required /></div>
-            <div><label>Amount</label><input name="price" type="text" placeholder="0.00" /></div>
-          </div>
-          <div class="form-row">
-            <div><label>Company</label><input name="company" /></div>
-            <div><label>Category</label><input name="category" /></div>
-          </div>
-          <div class="form-row">
-            <div><label>Kind</label>
-              <select name="kind"><option value="business">Business</option><option value="personal">Personal</option></select>
-            </div>
-            <div><label>Frequency</label>
-              <select name="frequency"><option value="one-time">One-time</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
-            </div>
-            <div><label>Date</label><input name="date" type="date" /></div>
-          </div>
-          <div class="form-row">
-            <div><label>Description</label><input name="description" /></div>
-          </div>
-          <input type="hidden" name="id" />
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-ghost" id="finance-clear">Clear</button>
-          </div>
-        </form>
+      <div id="finance-status"></div>
+
+      <!-- Finance sub-tabs -->
+      <div class="fin-tabs">
+        <button class="fin-tab-btn active" data-fin="analysis">Analysis</button>
+        <button class="fin-tab-btn" data-fin="expenses">Expenses</button>
+        <button class="fin-tab-btn" data-fin="income">Income</button>
+        <button class="fin-tab-btn" data-fin="business">Business</button>
       </div>
-      <div class="card">
-        <h2>Entries</h2>
-        <div style="overflow-x:auto;">
-          <table><thead><tr><th>Date</th><th>Product</th><th>Amount</th><th>Category</th><th>Kind</th><th></th></tr></thead>
-          <tbody id="finance-list"></tbody></table>
+
+      <!-- ANALYSIS -->
+      <div id="fin-panel-analysis" class="fin-panel active">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+            <h2 style="margin:0;">Overview</h2>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="month" id="fin-analysis-month" style="width:170px;" />
+              <button class="btn btn-ghost btn-sm" id="fin-analysis-all">All Time</button>
+            </div>
+          </div>
+          <div id="fin-analysis-summary" class="summary-grid"></div>
+          <div id="fin-analysis-content"></div>
+        </div>
+      </div>
+
+      <!-- EXPENSES -->
+      <div id="fin-panel-expenses" class="fin-panel">
+        <div class="card">
+          <div class="summary-grid">
+            <div class="summary-card"><div class="label">This Month (USD)</div><div class="value" id="fin-exp-month-usd">$0</div></div>
+            <div class="summary-card"><div class="label">This Month (IDR)</div><div class="value" id="fin-exp-month-idr">Rp 0</div></div>
+          </div>
+          <div class="month-btns" id="fin-exp-months"></div>
+          <h2>Add Expense</h2>
+          <form id="exp-form">
+            <div class="form-row">
+              <div><label>USD Amount</label><input name="price" type="number" step="0.01" id="fin-exp-usd" oninput="finConvertUsdToIdr()" /></div>
+              <div><label>IDR Amount</label><input name="localAmount" type="number" step="1" id="fin-exp-idr" oninput="finConvertIdrToUsd()" /></div>
+              <div><label>Rate</label><input type="number" id="fin-exp-rate" value="15800" style="width:90px;" /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Description</label><input name="product" required /></div>
+              <div><label>Category</label>
+                <select name="category">
+                  <option value="groceries">Groceries</option><option value="restaurant">Restaurant</option>
+                  <option value="rent">Rent</option><option value="health">Health</option>
+                  <option value="travel">Travel</option><option value="education">Education</option>
+                  <option value="transport">Transport</option><option value="utilities">Utilities</option>
+                  <option value="entertainment">Entertainment</option><option value="shopping">Shopping</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div><label>Place/Vendor</label><input name="company" /></div>
+              <div><label>Date</label><input name="date" type="date" /></div>
+            </div>
+            <input type="hidden" name="id" /><input type="hidden" name="kind" value="expense" /><input type="hidden" name="localCurrency" value="IDR" />
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button type="submit" class="btn btn-primary">Add Expense</button>
+              <button type="button" class="btn btn-ghost" onclick="this.closest('form').reset()">Clear</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Expense History</h2>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>USD</th><th>IDR</th><th>Description</th><th>Category</th><th>Place</th><th></th></tr></thead>
+          <tbody id="fin-exp-list"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- INCOME -->
+      <div id="fin-panel-income" class="fin-panel">
+        <div class="card">
+          <div class="summary-grid">
+            <div class="summary-card"><div class="label" id="fin-inc-month-label">This Month</div><div class="value positive" id="fin-inc-month-total">$0</div></div>
+            <div class="summary-card"><div class="label">All-Time Total</div><div class="value positive" id="fin-inc-all-total">$0</div></div>
+          </div>
+          <div class="month-btns" id="fin-inc-months"></div>
+          <h2>Add Income</h2>
+          <form id="inc-form">
+            <div class="form-row">
+              <div><label>Amount (USD)</label><input name="price" type="number" step="0.01" required /></div>
+              <div><label>Source</label><input name="product" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Category</label>
+                <select name="category">
+                  <option value="salary">Salary</option><option value="freelance">Freelance</option>
+                  <option value="consulting">Consulting</option><option value="sessions">Sessions</option>
+                  <option value="workshops">Workshops</option><option value="other">Other</option>
+                </select>
+              </div>
+              <div><label>Company/Client</label><input name="company" /></div>
+              <div><label>Date</label><input name="date" type="date" /></div>
+            </div>
+            <input type="hidden" name="id" /><input type="hidden" name="kind" value="income" />
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button type="submit" class="btn btn-sage">Add Income</button>
+              <button type="button" class="btn btn-ghost" onclick="this.closest('form').reset()">Clear</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Income History</h2>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>Amount</th><th>Source</th><th>Category</th><th>Client</th><th></th></tr></thead>
+          <tbody id="fin-inc-list"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- BUSINESS EXPENSES -->
+      <div id="fin-panel-business" class="fin-panel">
+        <div class="card">
+          <div class="summary-grid">
+            <div class="summary-card"><div class="label">Monthly Total</div><div class="value" id="fin-biz-monthly">$0</div></div>
+            <div class="summary-card"><div class="label">Yearly Total</div><div class="value" id="fin-biz-yearly">$0</div></div>
+            <div class="summary-card"><div class="label">Annualized</div><div class="value" id="fin-biz-annual">$0</div></div>
+          </div>
+          <h2>Add Business Expense</h2>
+          <form id="biz-form">
+            <div class="form-row">
+              <div><label>Price (USD)</label><input name="price" type="number" step="0.01" required /></div>
+              <div><label>Product/Service</label><input name="product" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Company</label><input name="company" /></div>
+              <div><label>Business Use Case</label><input name="businessUseCase" /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Frequency</label>
+                <select name="frequency" id="biz-freq" onchange="toggleBizDate()">
+                  <option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-Time</option>
+                </select>
+              </div>
+              <div id="biz-recurring-group"><label>Recurring Date</label><input name="recurringDate" placeholder="e.g. 1st, 15th" /></div>
+              <div id="biz-date-group" style="display:none;"><label>Date</label><input name="date" type="date" /></div>
+            </div>
+            <input type="hidden" name="id" /><input type="hidden" name="kind" value="business" />
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button type="submit" class="btn btn-primary">Add</button>
+              <button type="button" class="btn btn-ghost" onclick="this.closest('form').reset();toggleBizDate();">Clear</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Monthly Recurring</h2>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Price</th><th>Product</th><th>Company</th><th>Use Case</th><th>Day</th><th></th></tr></thead>
+          <tbody id="fin-biz-monthly-list"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2>Yearly Recurring</h2>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Price</th><th>Product</th><th>Company</th><th>Use Case</th><th>Day</th><th></th></tr></thead>
+          <tbody id="fin-biz-yearly-list"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2>One-Time Business Expenses</h2>
+          <div class="month-btns" id="fin-biz-months"></div>
+          <div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>USD</th><th>Description</th><th>Place</th><th></th></tr></thead>
+          <tbody id="fin-biz-onetime-list"></tbody></table></div>
         </div>
       </div>
     </div>
@@ -329,65 +487,266 @@ import '../../styles/global.css';
       }
 
       // ═══════════════════ FINANCES ═══════════════════
-      const finForm = document.getElementById('finance-form');
-      const finList = document.getElementById('finance-list');
       let finEntries = [];
+      let currentFinMode = 'analysis';
+      let finExpMonthFilter = '', finIncMonthFilter = '', finBizMonthFilter = '';
+
+      // Finance sub-tab switching
+      document.querySelectorAll('.fin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.fin-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.fin-panel').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          currentFinMode = btn.dataset.fin;
+          document.getElementById('fin-panel-' + currentFinMode).classList.add('active');
+          if (currentFinMode === 'analysis') renderAnalysis();
+        });
+      });
 
       async function loadFinances() {
         try {
           const res = await fetch('/api/finances');
           const data = await res.json();
           finEntries = data.entries || [];
-          renderFinances();
-        } catch (e) { finList.innerHTML = '<tr><td colspan="6">Failed to load.</td></tr>'; }
+          renderAllFinances();
+        } catch { showStatus('finance-status', 'Failed to load finances.', 'error'); }
       }
 
-      function renderFinances() {
-        if (finEntries.length === 0) {
-          finList.innerHTML = '<tr><td colspan="6" class="empty"><p>No entries yet.</p></td></tr>';
-          return;
-        }
-        finList.innerHTML = finEntries.map(e => `<tr>
+      function renderAllFinances() {
+        renderExpenses();
+        renderIncome();
+        renderBusiness();
+        if (currentFinMode === 'analysis') renderAnalysis();
+      }
+
+      // ── IDR conversion ──
+      window.finConvertUsdToIdr = function() {
+        const usd = parseFloat(document.getElementById('fin-exp-usd').value);
+        const rate = parseFloat(document.getElementById('fin-exp-rate').value) || 15800;
+        if (!isNaN(usd)) document.getElementById('fin-exp-idr').value = Math.round(usd * rate);
+      };
+      window.finConvertIdrToUsd = function() {
+        const idr = parseFloat(document.getElementById('fin-exp-idr').value);
+        const rate = parseFloat(document.getElementById('fin-exp-rate').value) || 15800;
+        if (!isNaN(idr)) document.getElementById('fin-exp-usd').value = (idr / rate).toFixed(2);
+      };
+
+      // ── Business date toggle ──
+      window.toggleBizDate = function() {
+        const freq = document.getElementById('biz-freq').value;
+        document.getElementById('biz-recurring-group').style.display = freq === 'one-time' ? 'none' : '';
+        document.getElementById('biz-date-group').style.display = freq === 'one-time' ? '' : 'none';
+      };
+
+      // ── Month button builder ──
+      function buildMonthBtns(entries, containerId, filterVar, setFn) {
+        const months = [...new Set(entries.map(e => (e.date || '').slice(0, 7)).filter(Boolean))].sort().reverse();
+        const el = document.getElementById(containerId);
+        if (months.length <= 1) { el.innerHTML = ''; return; }
+        const current = filterVar || '';
+        el.innerHTML = `<button class="month-btn ${!current ? 'active' : ''}" onclick="${setFn}('')">All</button>` +
+          months.map(m => `<button class="month-btn ${current === m ? 'active' : ''}" onclick="${setFn}('${m}')">${m}</button>`).join('');
+      }
+
+      // ── EXPENSES ──
+      window.setExpMonth = function(m) { finExpMonthFilter = m; renderExpenses(); };
+
+      function renderExpenses() {
+        const exp = finEntries.filter(e => e.kind === 'expense');
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const displayMonth = finExpMonthFilter || thisMonth;
+
+        // Monthly totals
+        const monthExp = exp.filter(e => (e.date || '').startsWith(displayMonth));
+        const monthUSD = monthExp.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const monthIDR = monthExp.reduce((s, e) => s + (parseFloat(e.localAmount) || 0), 0);
+        document.getElementById('fin-exp-month-usd').textContent = '$' + monthUSD.toFixed(2);
+        document.getElementById('fin-exp-month-idr').textContent = 'Rp ' + Math.round(monthIDR).toLocaleString('id-ID');
+
+        // Month buttons
+        buildMonthBtns(exp, 'fin-exp-months', finExpMonthFilter, 'setExpMonth');
+
+        // Filter & render table
+        const filtered = finExpMonthFilter ? exp.filter(e => (e.date || '').startsWith(finExpMonthFilter)) : exp;
+        const el = document.getElementById('fin-exp-list');
+        if (filtered.length === 0) { el.innerHTML = '<tr><td colspan="7" class="empty"><p>No expenses.</p></td></tr>'; return; }
+        el.innerHTML = filtered.map(e => `<tr>
           <td>${e.date || '—'}</td>
+          <td style="color:#c53030;">$${parseFloat(e.price || 0).toFixed(2)}</td>
+          <td style="color:var(--color-warm-400);">${e.localAmount ? 'Rp ' + Math.round(parseFloat(e.localAmount)).toLocaleString('id-ID') : ''}</td>
           <td>${esc(e.product)}</td>
-          <td>${e.price || '—'}</td>
-          <td>${esc(e.category || '')}</td>
-          <td>${e.kind || ''}</td>
-          <td>
-            <button class="btn btn-ghost btn-sm" onclick="editFinance('${e.id}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button>
-          </td>
+          <td><span class="cat-badge">${esc(e.category || 'other')}</span></td>
+          <td>${esc(e.company || '')}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td>
         </tr>`).join('');
       }
 
-      finForm.addEventListener('submit', async (ev) => {
-        ev.preventDefault();
-        const fd = new FormData(finForm);
-        const body = Object.fromEntries(fd);
-        if (!body.id) delete body.id;
-        try {
-          const res = await fetch('/api/finances', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-          if (res.ok) { showStatus('finance-status', 'Saved!'); finForm.reset(); loadFinances(); }
-          else showStatus('finance-status', 'Failed to save.', 'error');
-        } catch { showStatus('finance-status', 'Network error.', 'error'); }
+      // ── INCOME ──
+      window.setIncMonth = function(m) { finIncMonthFilter = m; renderIncome(); };
+
+      function renderIncome() {
+        const inc = finEntries.filter(e => e.kind === 'income');
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const displayMonth = finIncMonthFilter || thisMonth;
+
+        const monthInc = inc.filter(e => (e.date || '').startsWith(displayMonth));
+        const monthTotal = monthInc.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const allTotal = inc.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        document.getElementById('fin-inc-month-total').textContent = '$' + monthTotal.toFixed(2);
+        document.getElementById('fin-inc-all-total').textContent = '$' + allTotal.toFixed(2);
+        document.getElementById('fin-inc-month-label').textContent = displayMonth || 'This Month';
+
+        buildMonthBtns(inc, 'fin-inc-months', finIncMonthFilter, 'setIncMonth');
+
+        const filtered = finIncMonthFilter ? inc.filter(e => (e.date || '').startsWith(finIncMonthFilter)) : inc;
+        const el = document.getElementById('fin-inc-list');
+        if (filtered.length === 0) { el.innerHTML = '<tr><td colspan="6" class="empty"><p>No income.</p></td></tr>'; return; }
+        el.innerHTML = filtered.map(e => `<tr>
+          <td>${e.date || '—'}</td>
+          <td style="color:var(--color-sage-600);font-weight:600;">$${parseFloat(e.price || 0).toFixed(2)}</td>
+          <td>${esc(e.product)}</td>
+          <td><span class="cat-badge">${esc(e.category || 'other')}</span></td>
+          <td>${esc(e.company || '')}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td>
+        </tr>`).join('');
+      }
+
+      // ── BUSINESS ──
+      window.setBizMonth = function(m) { finBizMonthFilter = m; renderBusiness(); };
+
+      function renderBusiness() {
+        const biz = finEntries.filter(e => (e.kind || 'business') === 'business');
+        const bizMonthly = biz.filter(e => e.frequency === 'monthly');
+        const bizYearly = biz.filter(e => e.frequency === 'yearly');
+        const oneTime = finEntries.filter(e => e.kind === 'expense' && e.category === 'business');
+
+        const moTotal = bizMonthly.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const yrTotal = bizYearly.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        document.getElementById('fin-biz-monthly').textContent = '$' + moTotal.toFixed(2);
+        document.getElementById('fin-biz-yearly').textContent = '$' + yrTotal.toFixed(2);
+        document.getElementById('fin-biz-annual').textContent = '$' + ((moTotal * 12) + yrTotal).toFixed(2);
+
+        // Monthly recurring table
+        const moEl = document.getElementById('fin-biz-monthly-list');
+        moEl.innerHTML = bizMonthly.length === 0 ? '<tr><td colspan="6" class="empty"><p>None.</p></td></tr>' :
+          bizMonthly.map(e => `<tr><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td>${esc(e.businessUseCase || '')}</td><td>${esc(e.recurringDate || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('');
+
+        // Yearly recurring table
+        const yrEl = document.getElementById('fin-biz-yearly-list');
+        yrEl.innerHTML = bizYearly.length === 0 ? '<tr><td colspan="6" class="empty"><p>None.</p></td></tr>' :
+          bizYearly.map(e => `<tr><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td>${esc(e.businessUseCase || '')}</td><td>${esc(e.recurringDate || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('');
+
+        // One-time business expenses
+        buildMonthBtns(oneTime, 'fin-biz-months', finBizMonthFilter, 'setBizMonth');
+        const filteredOT = finBizMonthFilter ? oneTime.filter(e => (e.date || '').startsWith(finBizMonthFilter)) : oneTime;
+        const otEl = document.getElementById('fin-biz-onetime-list');
+        if (filteredOT.length === 0) { otEl.innerHTML = '<tr><td colspan="5" class="empty"><p>None.</p></td></tr>'; return; }
+        const otTotal = filteredOT.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        otEl.innerHTML = filteredOT.map(e => `<tr><td>${e.date || '—'}</td><td>$${parseFloat(e.price || 0).toFixed(2)}</td><td>${esc(e.product)}</td><td>${esc(e.company || '')}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFinance('${e.id}')">Del</button></td></tr>`).join('') +
+          `<tr style="font-weight:600;border-top:2px solid var(--color-warm-200);"><td></td><td>$${otTotal.toFixed(2)}</td><td colspan="3">Total</td></tr>`;
+      }
+
+      // ── ANALYSIS ──
+      document.getElementById('fin-analysis-month').value = new Date().toISOString().slice(0, 7);
+      document.getElementById('fin-analysis-month').addEventListener('change', renderAnalysis);
+      document.getElementById('fin-analysis-all').addEventListener('click', () => {
+        document.getElementById('fin-analysis-month').value = '';
+        renderAnalysis();
       });
 
-      document.getElementById('finance-clear').addEventListener('click', () => { finForm.reset(); });
+      const BAR_COLORS = ['#7d5f52','#576447','#a18072','#8f9c7a','#bfa094','#6f7d5b','#d2bab0','#434d37','#e0cec7','#333b2a'];
 
-      window.editFinance = function(id) {
-        const e = finEntries.find(x => x.id === id);
-        if (!e) return;
-        finForm.product.value = e.product || '';
-        finForm.price.value = e.price || '';
-        finForm.company.value = e.company || '';
-        finForm.category.value = e.category || '';
-        finForm.kind.value = e.kind || 'business';
-        finForm.frequency.value = e.frequency || 'one-time';
-        finForm.date.value = e.date || '';
-        finForm.description.value = e.description || '';
-        finForm.id.value = e.id;
-        finForm.product.focus();
-      };
+      function renderAnalysis() {
+        const monthFilter = document.getElementById('fin-analysis-month').value || '';
+        const exp = finEntries.filter(e => e.kind === 'expense' && (!monthFilter || (e.date || '').startsWith(monthFilter)));
+        const inc = finEntries.filter(e => e.kind === 'income' && (!monthFilter || (e.date || '').startsWith(monthFilter)));
+
+        const expTotal = exp.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const incTotal = inc.reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+        const net = incTotal - expTotal;
+
+        // Summary cards
+        document.getElementById('fin-analysis-summary').innerHTML = `
+          <div class="summary-card"><div class="label">Total Expenses</div><div class="value negative">$${expTotal.toFixed(2)}</div></div>
+          <div class="summary-card"><div class="label">Total Income</div><div class="value positive">$${incTotal.toFixed(2)}</div></div>
+          <div class="summary-card"><div class="label">Net</div><div class="value ${net >= 0 ? 'positive' : 'negative'}">$${net.toFixed(2)}</div></div>`;
+
+        let html = '';
+
+        // Expense by category
+        if (exp.length > 0) {
+          const byCat = {};
+          exp.forEach(e => { const c = e.category || 'other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
+          const sorted = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+          const maxCat = sorted[0]?.[1] || 1;
+          html += '<h2 style="margin-top:24px;">Expense Categories</h2>';
+          sorted.forEach(([cat, total], i) => {
+            const pct = ((total / expTotal) * 100).toFixed(0);
+            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${BAR_COLORS[i % BAR_COLORS.length]};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
+          });
+        }
+
+        // Top vendors
+        if (exp.length > 0) {
+          const byVendor = {};
+          exp.forEach(e => { const v = (e.company || 'Unknown').toLowerCase(); byVendor[v] = (byVendor[v] || 0) + (parseFloat(e.price) || 0); });
+          const topV = Object.entries(byVendor).sort((a, b) => b[1] - a[1]).slice(0, 10);
+          html += '<h2 style="margin-top:24px;">Top Vendors</h2><table><thead><tr><th>#</th><th>Place</th><th>Total</th><th>%</th></tr></thead><tbody>';
+          topV.forEach(([v, total], i) => {
+            html += `<tr><td>${i+1}</td><td>${esc(v)}</td><td>$${total.toFixed(2)}</td><td>${((total/expTotal)*100).toFixed(0)}%</td></tr>`;
+          });
+          html += '</tbody></table>';
+        }
+
+        // Income by category
+        if (inc.length > 0) {
+          const byCat = {};
+          inc.forEach(e => { const c = e.category || 'other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
+          const sorted = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+          const maxCat = sorted[0]?.[1] || 1;
+          html += '<h2 style="margin-top:24px;">Income Categories</h2>';
+          sorted.forEach(([cat, total], i) => {
+            const pct = ((total / incTotal) * 100).toFixed(0);
+            html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${BAR_COLORS[(i+5) % BAR_COLORS.length]};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
+          });
+        }
+
+        // Business context
+        const biz = finEntries.filter(e => (e.kind || 'business') === 'business');
+        if (biz.length > 0) {
+          const bizMo = biz.filter(e => e.frequency === 'monthly').reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+          const bizYr = biz.filter(e => e.frequency === 'yearly').reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
+          const annual = (bizMo * 12) + bizYr;
+          html += `<h2 style="margin-top:24px;">Business Overhead</h2><p style="font-size:14px;color:var(--color-warm-600);">Monthly: $${bizMo.toFixed(2)} &middot; Yearly: $${bizYr.toFixed(2)} &middot; <strong>Annual: $${annual.toFixed(2)}</strong></p>`;
+        }
+
+        if (!exp.length && !inc.length) html = '<div class="empty"><p>No data for this period.</p></div>';
+        document.getElementById('fin-analysis-content').innerHTML = html;
+      }
+
+      // ── Finance form handlers ──
+      function setupFinForm(formId, kind) {
+        const form = document.getElementById(formId);
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const fd = new FormData(form);
+          const body = Object.fromEntries(fd);
+          if (!body.id) delete body.id;
+          // For one-time business, store as expense with business category
+          if (kind === 'business' && body.frequency === 'one-time') {
+            body.kind = 'expense';
+            body.category = 'business';
+          }
+          try {
+            const res = await fetch('/api/finances', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            if (res.ok) { showStatus('finance-status', 'Saved!'); form.reset(); if (kind === 'business') toggleBizDate(); loadFinances(); }
+            else showStatus('finance-status', 'Failed to save.', 'error');
+          } catch { showStatus('finance-status', 'Network error.', 'error'); }
+        });
+      }
+      setupFinForm('exp-form', 'expense');
+      setupFinForm('inc-form', 'income');
+      setupFinForm('biz-form', 'business');
 
       window.deleteFinance = async function(id) {
         if (!confirm('Delete this entry?')) return;
