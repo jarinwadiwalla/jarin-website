@@ -792,38 +792,61 @@ import '../../styles/global.css';
           const byCat = {};
           exp.forEach(e => { const c = e.category || 'Other'; byCat[c] = (byCat[c] || 0) + (parseFloat(e.price) || 0); });
           const sorted = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
-          const maxCat = sorted[0]?.[1] || 1;
+
+          // Separate outliers: category > $500 AND > 40% of total
+          const outliers = sorted.filter(([, total]) => total > 500 && (total / expTotal) > 0.4);
+          const everyday = outliers.length > 0 ? sorted.filter(([, total]) => !(total > 500 && (total / expTotal) > 0.4)) : sorted;
+          const everydayTotal = everyday.reduce((s, [, t]) => s + t, 0);
+          const outlierTotal = outliers.reduce((s, [, t]) => s + t, 0);
+
+          // Show outlier callout if any
+          if (outliers.length > 0) {
+            html += '<h2 style="margin-top:24px;">Large Expenses</h2>';
+            html += '<div class="mom-card">';
+            outliers.forEach(([cat, total]) => {
+              const cc = catColor(cat);
+              html += `<div class="mom-stat"><div class="label">${cat}</div><div class="value negative" style="font-size:20px;">$${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div></div>`;
+            });
+            html += `<div class="mom-stat"><div class="label">Day-to-Day</div><div class="value" style="font-size:20px;">$${everydayTotal.toFixed(2)}</div></div>`;
+            html += '</div>';
+          }
+
+          // Donut uses everyday categories only (or all if no outliers)
+          const donutCats = everyday;
+          const donutTotal = outliers.length > 0 ? everydayTotal : expTotal;
+          const maxCat = donutCats[0]?.[1] || 1;
 
           // Build conic-gradient
           let angle = 0;
           const gradParts = [];
-          sorted.forEach(([cat, total]) => {
+          donutCats.forEach(([cat, total]) => {
             const cc = catColor(cat);
-            const slice = (total / expTotal) * 360;
+            const slice = (total / donutTotal) * 360;
             gradParts.push(`${cc.fill} ${angle}deg ${angle + slice}deg`);
             angle += slice;
           });
           const gradient = `conic-gradient(${gradParts.join(', ')})`;
 
           // Legend
-          const legendItems = sorted.map(([cat, total]) => {
+          const legendItems = donutCats.map(([cat, total]) => {
             const cc = catColor(cat);
-            const pct = ((total / expTotal) * 100).toFixed(0);
+            const pct = ((total / donutTotal) * 100).toFixed(0);
             return `<div class="donut-legend-item"><div class="donut-legend-swatch" style="background:${cc.fill};"></div><span>${cat}</span><span class="donut-legend-pct">${pct}%</span></div>`;
           }).join('');
 
-          html += '<h2 style="margin-top:24px;">Expense Categories</h2>';
+          const donutLabel = outliers.length > 0 ? 'Day-to-Day' : 'Total';
+          html += `<h2 style="margin-top:24px;">Expense Categories${outliers.length > 0 ? ' (excl. large)' : ''}</h2>`;
           html += `<div class="donut-wrap">
             <div class="donut" style="background:${gradient};">
-              <div class="donut-hole"><div class="donut-total">$${expTotal.toFixed(0)}</div><div class="donut-label">Total</div></div>
+              <div class="donut-hole"><div class="donut-total">$${donutTotal.toFixed(0)}</div><div class="donut-label">${donutLabel}</div></div>
             </div>
             <div class="donut-legend">${legendItems}</div>
           </div>`;
 
-          // Category bars with per-category colors
-          sorted.forEach(([cat, total]) => {
+          // Category bars with per-category colors (everyday only)
+          donutCats.forEach(([cat, total]) => {
             const cc = catColor(cat);
-            const pct = ((total / expTotal) * 100).toFixed(0);
+            const pct = ((total / donutTotal) * 100).toFixed(0);
             html += `<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${(total/maxCat)*100}%;background:${cc.fill};"></div></div><div class="bar-value">$${total.toFixed(0)} (${pct}%)</div></div>`;
           });
         }
