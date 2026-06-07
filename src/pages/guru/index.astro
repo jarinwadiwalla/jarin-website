@@ -178,6 +178,135 @@ import '../../styles/global.css';
         .mom-card { grid-template-columns: 1fr 1fr; }
         .trend-month { width: 44px; font-size: 11px; }
       }
+
+      /* ── Habits enhanced ── */
+      .habit-stats-bar { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+      .habit-stat-pill { background: var(--color-warm-50); border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--color-warm-600); }
+      .habit-stat-pill strong { color: var(--color-warm-800); }
+      .habit-view-btns { display: flex; gap: 0; margin-bottom: 16px; border: 1px solid var(--color-warm-200); border-radius: 8px; overflow: hidden; width: fit-content; }
+      .habit-view-btn { padding: 7px 18px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: white; border: none; cursor: pointer; color: var(--color-warm-500); transition: all 0.15s; }
+      .habit-view-btn.active { background: var(--color-sage-600); color: white; }
+      .habit-edit-btn { background: none; border: none; cursor: pointer; padding: 4px 8px; color: var(--color-warm-400); font-size: 12px; border-radius: 4px; }
+      .habit-edit-btn:hover { background: var(--color-warm-100); color: var(--color-warm-700); }
+      /* Heatmap */
+      .heatmap-row { display: flex; gap: 2px; flex-wrap: wrap; margin: 8px 0; }
+      .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+      .heatmap-cell.done { background: var(--color-sage-500); }
+      .heatmap-cell.empty { background: var(--color-warm-100); }
+      .habit-stats-table { width: 100%; }
+      .habit-stats-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--color-warm-100); }
+      .habit-stats-row:last-child { border-bottom: none; }
+      .habit-stats-name { font-weight: 600; font-size: 14px; color: var(--color-warm-800); min-width: 140px; }
+      .habit-stats-meta { font-size: 12px; color: var(--color-warm-500); display: flex; gap: 12px; flex-wrap: wrap; }
+      .habit-stats-meta span strong { color: var(--color-warm-700); }
+
+      /* ── Todos ── */
+      .todo-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; background: var(--color-warm-50); transition: background 0.15s; }
+      .todo-item:hover { background: var(--color-warm-100); }
+      .todo-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--color-warm-300); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; margin-top: 1px; transition: all 0.15s; }
+      .todo-check.done { background: var(--color-sage-600); border-color: var(--color-sage-600); }
+      .todo-check.done::after { content: '\2713'; color: white; font-size: 13px; font-weight: bold; }
+      .todo-text-wrap { flex: 1; }
+      .todo-text { font-size: 14px; color: var(--color-warm-800); }
+      .todo-text.done { text-decoration: line-through; color: var(--color-warm-400); }
+      .todo-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 3px; align-items: center; }
+      .priority-badge { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+      .priority-1 { background: #fee2e2; color: #991b1b; }
+      .priority-2 { background: #fef3c7; color: #92400e; }
+      .priority-3 { background: #dbeafe; color: #1e40af; }
+      .due-date-label { font-size: 11px; color: var(--color-warm-500); }
+      .due-date-label.overdue { color: #c53030; font-weight: 600; }
+      .todo-actions { display: flex; gap: 4px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+      .todo-item:hover .todo-actions { opacity: 1; }
+      .todo-filter-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+      .filter-btn { padding: 4px 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--color-warm-200); border-radius: 6px; background: white; color: var(--color-warm-600); cursor: pointer; transition: all 0.15s; }
+      .filter-btn.active { background: var(--color-sage-600); color: white; border-color: var(--color-sage-600); }
+
+      /* ── Intentions ── */
+      .intention-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
+      .venture-rail { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: sticky; top: 120px; }
+      .venture-rail h3 { font-family: var(--font-sans); font-weight: 300; font-size: 16px; margin: 0 0 12px; color: var(--color-warm-700); }
+      .venture-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+      .venture-item:hover { background: var(--color-warm-50); }
+      .venture-item.active { background: var(--color-warm-100); }
+      .venture-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .venture-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--color-warm-700); }
+      .venture-edit { background: none; border: none; cursor: pointer; padding: 2px 6px; color: var(--color-warm-400); font-size: 11px; border-radius: 3px; }
+      .venture-edit:hover { background: var(--color-warm-200); }
+      .venture-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+      .horizon-section { margin-bottom: 24px; }
+      .horizon-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-warm-400); margin-bottom: 8px; }
+      .goal-card { background: white; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); cursor: pointer; transition: box-shadow 0.15s; border-left: 3px solid transparent; }
+      .goal-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .goal-card.expanded { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .goal-card-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .goal-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--color-warm-800); }
+      .goal-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+      .p-badge { padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+      .p-badge-1 { background: #fee2e2; color: #991b1b; }
+      .p-badge-2 { background: #fef3c7; color: #92400e; }
+      .p-badge-3 { background: #dbeafe; color: #1e40af; }
+      .size-badge { padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; background: var(--color-warm-100); color: var(--color-warm-600); }
+      .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+      .status-backlog { background: #f3f4f6; color: #6b7280; }
+      .status-todo { background: #dbeafe; color: #1e40af; }
+      .status-working { background: #d1fae5; color: #065f46; }
+      .status-waiting { background: #fef3c7; color: #92400e; }
+      .status-done { background: #dcfce7; color: #166534; }
+      .status-dropped { background: #fee2e2; color: #991b1b; }
+      .goal-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-warm-100); }
+      .goal-detail.show { display: block; }
+      .goal-why { font-size: 13px; color: var(--color-warm-600); font-style: italic; margin-bottom: 10px; }
+      .checkin-btn { padding: 5px 14px; font-size: 12px; font-weight: 600; border: 1px solid var(--color-sage-400); border-radius: 6px; background: white; color: var(--color-sage-700); cursor: pointer; transition: all 0.15s; }
+      .checkin-btn.checked { background: var(--color-sage-600); color: white; border-color: var(--color-sage-600); }
+      .checkin-btn:hover { background: var(--color-sage-50); }
+      .goal-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+      /* Kanban */
+      .kanban-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; overflow-x: auto; }
+      .kanban-lane { background: var(--color-warm-50); border-radius: 10px; padding: 12px; min-height: 200px; }
+      .kanban-lane-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-warm-500); margin-bottom: 10px; }
+      .kanban-card { background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); font-size: 13px; cursor: pointer; }
+      .kanban-card:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+      .int-view-btns { display: flex; gap: 0; margin-bottom: 16px; border: 1px solid var(--color-warm-200); border-radius: 8px; overflow: hidden; width: fit-content; }
+      .int-view-btn { padding: 7px 18px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: white; border: none; cursor: pointer; color: var(--color-warm-500); transition: all 0.15s; }
+      .int-view-btn.active { background: var(--color-sage-600); color: white; }
+
+      /* ── Office Work ── */
+      .ow-view-btns { display: flex; gap: 0; margin-bottom: 16px; border: 1px solid var(--color-warm-200); border-radius: 8px; overflow: hidden; width: fit-content; }
+      .ow-view-btn { padding: 7px 18px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: white; border: none; cursor: pointer; color: var(--color-warm-500); transition: all 0.15s; }
+      .ow-view-btn.active { background: var(--color-sage-600); color: white; }
+      .ow-cat-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; background: var(--color-warm-50); margin-bottom: 8px; }
+      .ow-cat-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+      .ow-cat-name { flex: 1; font-weight: 600; font-size: 14px; }
+      .ow-cat-kind { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-warm-400); }
+      .ow-cat-total { font-size: 13px; color: var(--color-sage-700); font-weight: 600; }
+      .ow-session-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--color-warm-100); }
+      .ow-session-item:last-child { border-bottom: none; }
+      .ow-session-date { font-size: 12px; color: var(--color-warm-500); min-width: 80px; }
+      .ow-session-cat { font-size: 13px; font-weight: 600; flex: 1; }
+      .ow-session-dur { font-size: 13px; color: var(--color-sage-700); font-weight: 600; font-family: var(--font-sans); min-width: 60px; text-align: right; }
+      .ow-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+      .ow-bar-label { width: 120px; font-size: 13px; color: var(--color-warm-700); text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .ow-bar-track { flex: 1; height: 24px; background: var(--color-warm-100); border-radius: 4px; overflow: hidden; }
+      .ow-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+      .ow-bar-value { width: 70px; font-size: 12px; color: var(--color-warm-600); flex-shrink: 0; }
+      .ow-range-btns { display: flex; gap: 6px; margin-bottom: 16px; }
+      .ow-range-btn { padding: 4px 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--color-warm-200); border-radius: 6px; background: white; color: var(--color-warm-600); cursor: pointer; transition: all 0.15s; }
+      .ow-range-btn.active { background: var(--color-sage-600); color: white; border-color: var(--color-sage-600); }
+
+      /* ── Modal overlay ── */
+      .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+      .modal-overlay.open { display: flex; }
+      .modal-box { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+      .modal-box h3 { font-family: var(--font-sans); font-weight: 300; font-size: 20px; margin: 0 0 20px; color: var(--color-warm-800); }
+      .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+
+      @media (max-width: 640px) {
+        .intention-layout { grid-template-columns: 1fr; }
+        .venture-rail { position: static; }
+        .kanban-board { grid-template-columns: repeat(3, 200px); }
+        .ow-bar-label { width: 80px; font-size: 12px; }
+      }
     </style>
   </head>
   <body>
@@ -195,7 +324,19 @@ import '../../styles/global.css';
       <button class="tab-btn" data-tab="notes">Notes</button>
       <button class="tab-btn" data-tab="timer">Timer</button>
       <button class="tab-btn" data-tab="habits">Habits</button>
+      <button class="tab-btn" data-tab="todos">Todos</button>
+      <button class="tab-btn" data-tab="intentions">Intentions</button>
+      <button class="tab-btn" data-tab="office-work">Office Work</button>
     </nav>
+
+    <!-- Active office-work timer banner (shown when timer running) -->
+    <div id="ow-timer-banner" style="display:none;background:var(--color-sage-700);color:white;padding:8px 24px;display:none;align-items:center;gap:12px;font-size:14px;position:sticky;top:93px;z-index:35;">
+      <span id="ow-banner-dot" style="width:10px;height:10px;border-radius:50%;background:white;flex-shrink:0;"></span>
+      <span id="ow-banner-cat" style="font-weight:600;"></span>
+      <span id="ow-banner-time" style="font-family:var(--font-sans);font-size:18px;letter-spacing:0.04em;">00:00:00</span>
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost btn-sm" id="ow-banner-stop" style="background:rgba(255,255,255,0.2);color:white;">Stop</button>
+    </div>
 
     <!-- ═══════════════════════ FINANCES ═══════════════════════ -->
     <div id="panel-finances" class="panel active">
@@ -475,30 +616,319 @@ import '../../styles/global.css';
     <!-- ═══════════════════════ HABITS ═══════════════════════ -->
     <div id="panel-habits" class="panel">
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h2 style="margin:0;">Today's Habits</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h2 style="margin:0;">Habits</h2>
           <button class="btn btn-sage btn-sm" id="habit-add-btn">+ Add Habit</button>
         </div>
         <div id="habits-status"></div>
-        <div id="habits-list"></div>
+        <div class="habit-view-btns">
+          <button class="habit-view-btn active" data-hview="today">Today</button>
+          <button class="habit-view-btn" data-hview="stats">Stats</button>
+        </div>
+        <div id="habit-view-today">
+          <div class="habit-stats-bar" id="habit-stat-bar"></div>
+          <div id="habits-list"></div>
+        </div>
+        <div id="habit-view-stats" style="display:none;">
+          <div id="habits-stats-list"></div>
+        </div>
       </div>
-      <div class="card" id="habit-form-card" style="display:none;">
-        <h2>Add / Edit Habit</h2>
-        <form id="habit-form">
+    </div>
+
+    <!-- ═══════════════════════ TODOS ═══════════════════════ -->
+    <div id="panel-todos" class="panel">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h2 style="margin:0;">To-Dos</h2>
+          <button class="btn btn-sage btn-sm" id="todo-add-btn">+ Add</button>
+        </div>
+        <div id="todos-status"></div>
+        <div class="todo-filter-bar">
+          <button class="filter-btn active" data-filter="active">Active</button>
+          <button class="filter-btn" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="done">Done</button>
+        </div>
+        <div id="todos-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ INTENTIONS ═══════════════════════ -->
+    <div id="panel-intentions" class="panel">
+      <div class="intention-layout">
+        <!-- Left rail: ventures -->
+        <div class="venture-rail">
+          <h3>Ventures</h3>
+          <div id="venture-list"></div>
+          <button class="btn btn-sage btn-sm" style="width:100%;margin-top:10px;" id="venture-add-btn">+ Add Venture</button>
+        </div>
+        <!-- Main: goals -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+            <div class="int-view-btns">
+              <button class="int-view-btn active" data-view="horizon">Horizon</button>
+              <button class="int-view-btn" data-view="kanban">Kanban</button>
+            </div>
+            <button class="btn btn-sage btn-sm" id="goal-add-btn">+ Add Goal</button>
+          </div>
+          <div id="int-view-horizon">
+            <div class="horizon-section">
+              <div class="horizon-label">Daily</div>
+              <div id="goals-daily"></div>
+            </div>
+            <div class="horizon-section">
+              <div class="horizon-label">Weekly</div>
+              <div id="goals-weekly"></div>
+            </div>
+            <div class="horizon-section">
+              <div class="horizon-label">Quarterly</div>
+              <div id="goals-quarterly"></div>
+            </div>
+            <div class="horizon-section">
+              <div class="horizon-label">Yearly</div>
+              <div id="goals-yearly"></div>
+            </div>
+          </div>
+          <div id="int-view-kanban" style="display:none;">
+            <div class="kanban-board">
+              <div class="kanban-lane"><div class="kanban-lane-title">Backlog</div><div id="kb-backlog"></div></div>
+              <div class="kanban-lane"><div class="kanban-lane-title">To Do</div><div id="kb-todo"></div></div>
+              <div class="kanban-lane"><div class="kanban-lane-title">Working</div><div id="kb-working"></div></div>
+              <div class="kanban-lane"><div class="kanban-lane-title">Waiting</div><div id="kb-waiting"></div></div>
+              <div class="kanban-lane"><div class="kanban-lane-title">Done</div><div id="kb-done"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ OFFICE WORK ═══════════════════════ -->
+    <div id="panel-office-work" class="panel">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          <h2 style="margin:0;">Office Work</h2>
+          <button class="btn btn-sage btn-sm" id="ow-cat-add-btn">+ Add Category</button>
+        </div>
+        <div id="ow-status"></div>
+        <div class="ow-view-btns">
+          <button class="ow-view-btn active" data-view="analytics">Analytics</button>
+          <button class="ow-view-btn" data-view="categories">Categories</button>
+          <button class="ow-view-btn" data-view="sessions">Sessions</button>
+        </div>
+
+        <!-- Analytics -->
+        <div id="ow-view-analytics">
+          <div class="ow-range-btns">
+            <button class="ow-range-btn active" data-range="week">This Week</button>
+            <button class="ow-range-btn" data-range="month">This Month</button>
+          </div>
+          <div id="ow-analytics-bars"></div>
+          <div id="ow-analytics-total" style="font-size:13px;color:var(--color-warm-500);margin-top:8px;"></div>
+        </div>
+
+        <!-- Categories -->
+        <div id="ow-view-categories" style="display:none;">
+          <div id="ow-cat-list"></div>
+        </div>
+
+        <!-- Sessions -->
+        <div id="ow-view-sessions" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div class="ow-range-btns" style="margin:0;">
+              <button class="ow-range-btn active" data-srange="30">Last 30d</button>
+              <button class="ow-range-btn" data-srange="90">Last 90d</button>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="ow-session-add-btn">+ Log Session</button>
+          </div>
+          <div id="ow-sessions-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MODALS ═══ -->
+
+    <!-- Venture modal -->
+    <div class="modal-overlay" id="venture-modal">
+      <div class="modal-box">
+        <h3 id="venture-modal-title">Add Venture</h3>
+        <form id="venture-form">
+          <input type="hidden" name="id" />
           <div class="form-row">
             <div><label>Name</label><input name="name" required /></div>
-            <div><label>Frequency</label>
-              <select name="frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select>
+            <div><label>Color</label><input name="color" type="color" value="#5C6BC0" style="height:42px;padding:4px;" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Icon (emoji)</label><input name="icon" placeholder="🎯" maxlength="4" /></div>
+          </div>
+          <div><label>Tagline</label><input name="tagline" placeholder="Why this venture matters" /></div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="venture-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Goal modal -->
+    <div class="modal-overlay" id="goal-modal">
+      <div class="modal-box">
+        <h3 id="goal-modal-title">Add Goal</h3>
+        <form id="goal-form">
+          <input type="hidden" name="id" />
+          <div><label>Title</label><input name="title" required /></div>
+          <div class="form-row" style="margin-top:12px;">
+            <div><label>Horizon</label>
+              <select name="horizon">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+            <div><label>Priority</label>
+              <select name="priority">
+                <option value="0">None</option>
+                <option value="1">P1 — Critical</option>
+                <option value="2">P2 — Important</option>
+                <option value="3">P3 — Nice to have</option>
+              </select>
             </div>
           </div>
           <div class="form-row">
-            <div><label>Category</label><input name="category" placeholder="general" /></div>
-            <div><label>Group</label><input name="stackGroup" placeholder="e.g. morning, evening" /></div>
+            <div><label>Size</label>
+              <select name="size">
+                <option value="">—</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+              </select>
+            </div>
+            <div><label>Status</label>
+              <select name="status">
+                <option value="todo">To Do</option>
+                <option value="backlog">Backlog</option>
+                <option value="working">Working</option>
+                <option value="waiting">Waiting</option>
+                <option value="done">Done</option>
+                <option value="dropped">Dropped</option>
+              </select>
+            </div>
           </div>
+          <div style="margin-top:12px;"><label>Ventures (select all that apply)</label><div id="goal-venture-checkboxes" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;"></div></div>
+          <div style="margin-top:12px;"><label>Why (motivation memo)</label><textarea name="why" rows="2" style="min-height:60px;"></textarea></div>
+          <div style="margin-top:12px;"><label>Target Date (optional)</label><input name="targetDate" type="date" /></div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="goal-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Todo modal -->
+    <div class="modal-overlay" id="todo-modal">
+      <div class="modal-box">
+        <h3 id="todo-modal-title">Add To-Do</h3>
+        <form id="todo-form">
           <input type="hidden" name="id" />
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-ghost" id="habit-cancel">Cancel</button>
+          <div><label>Task</label><input name="text" required /></div>
+          <div class="form-row" style="margin-top:12px;">
+            <div><label>Priority</label>
+              <select name="priority">
+                <option value="0">None</option>
+                <option value="1">High (P1)</option>
+                <option value="2">Medium (P2)</option>
+                <option value="3">Low (P3)</option>
+              </select>
+            </div>
+            <div><label>Due Date</label><input name="dueDate" type="date" /></div>
+          </div>
+          <div style="margin-top:12px;"><label>Venture (optional)</label>
+            <select name="ventureId" id="todo-venture-select">
+              <option value="">— None —</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="todo-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Office Work category modal -->
+    <div class="modal-overlay" id="ow-cat-modal">
+      <div class="modal-box">
+        <h3 id="ow-cat-modal-title">Add Category</h3>
+        <form id="ow-cat-form">
+          <input type="hidden" name="id" />
+          <div class="form-row">
+            <div><label>Name</label><input name="name" required /></div>
+            <div><label>Color</label><input name="color" type="color" value="#5C6BC0" style="height:42px;padding:4px;" /></div>
+          </div>
+          <div><label>Kind</label>
+            <select name="kind">
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="ow-cat-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Office Work session modal -->
+    <div class="modal-overlay" id="ow-session-modal">
+      <div class="modal-box">
+        <h3>Log Session</h3>
+        <form id="ow-session-form">
+          <input type="hidden" name="id" />
+          <div><label>Category</label><select name="categoryId" id="ow-session-cat-select" required></select></div>
+          <div class="form-row" style="margin-top:12px;">
+            <div><label>Date</label><input name="date" type="date" required /></div>
+            <div><label>Duration (minutes)</label><input name="durationMin" type="number" min="1" required /></div>
+          </div>
+          <div style="margin-top:12px;"><label>Notes</label><input name="notes" /></div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="ow-session-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Habit edit modal -->
+    <div class="modal-overlay" id="habit-modal">
+      <div class="modal-box">
+        <h3 id="habit-modal-title">Add Habit</h3>
+        <form id="habit-modal-form">
+          <input type="hidden" name="id" />
+          <div><label>Name</label><input name="name" required /></div>
+          <div class="form-row" style="margin-top:12px;">
+            <div><label>Frequency</label>
+              <select name="frequency">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div><label>Group</label><input name="stackGroup" placeholder="e.g. morning" /></div>
+          </div>
+          <div class="form-row">
+            <div><label>Value Label (optional)</label><input name="valueLabel" placeholder="e.g. miles, pages" /></div>
+            <div><label>Schedule Days</label><input name="scheduleDays" placeholder="mon,tue,wed,thu,fri" /></div>
+          </div>
+          <div style="margin-top:12px;"><label>Venture (optional)</label>
+            <select name="ventureId" id="habit-venture-select">
+              <option value="">— None —</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="habit-modal-close">Cancel</button>
+            <button type="submit" class="btn btn-sage">Save</button>
           </div>
         </form>
       </div>
@@ -521,6 +951,9 @@ import '../../styles/global.css';
           else if (t === 'newsletter') loadSubscribers();
           else if (t === 'notes') loadNotes();
           else if (t === 'habits') loadHabits();
+          else if (t === 'todos') loadTodos();
+          else if (t === 'intentions') loadIntentions();
+          else if (t === 'office-work') loadOfficeWork();
         });
       });
 
@@ -1240,25 +1673,57 @@ import '../../styles/global.css';
         document.getElementById('sw-laps').innerHTML = '';
       });
 
+      // ═══════════════════ HABIT VIEW TOGGLE ═══════════════════
+      document.querySelectorAll('.habit-view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.habit-view-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('habit-view-today').style.display = btn.dataset.hview === 'today' ? '' : 'none';
+          document.getElementById('habit-view-stats').style.display = btn.dataset.hview === 'stats' ? '' : 'none';
+          if (btn.dataset.hview === 'stats') renderHabitStats();
+        });
+      });
+
       // ═══════════════════ HABITS ═══════════════════
-      const habitForm = document.getElementById('habit-form');
-      const habitFormCard = document.getElementById('habit-form-card');
-      let allHabits = [], todayLogs = [];
+      let allHabits = [], todayLogs = [], allRecentLogs = [];
 
       function clientToday() { return new Date().toISOString().slice(0, 10); }
 
       async function loadHabits() {
         try {
           const today = clientToday();
-          const res = await fetch('/api/habits?today=' + today);
-          const data = await res.json();
+          const [habitsRes, venturesRes] = await Promise.all([
+            fetch('/api/habits?today=' + today),
+            allVentures.length ? Promise.resolve(null) : fetch('/api/intention?today=' + today),
+          ]);
+          const data = await habitsRes.json();
           allHabits = (data.habits || []).filter(h => h.status === 'active');
           todayLogs = data.todayLogs || [];
+          allRecentLogs = data.recentLogs || [];
+          if (venturesRes) {
+            const vd = await venturesRes.json();
+            allVentures = vd.ventures || [];
+          }
           renderHabits();
         } catch { document.getElementById('habits-list').innerHTML = '<div class="empty"><p>Failed to load.</p></div>'; }
       }
 
+      function isDayScheduled(h) {
+        if (!h.scheduleDays) return true;
+        const days = h.scheduleDays.split(',').map(d => d.trim().toLowerCase()).filter(Boolean);
+        if (!days.length) return true;
+        const names = ['sun','mon','tue','wed','thu','fri','sat'];
+        return days.includes(names[new Date().getDay()]);
+      }
+
       function renderHabits() {
+        // Stat bar
+        const scheduled = allHabits.filter(h => h.frequency === 'daily' && isDayScheduled(h));
+        const doneCount = scheduled.filter(h => todayLogs.some(l => l.habitId === h.id)).length;
+        document.getElementById('habit-stat-bar').innerHTML =
+          `<div class="habit-stat-pill">Today: <strong>${doneCount}/${scheduled.length}</strong></div>` +
+          `<div class="habit-stat-pill">Streak avg: <strong>${scheduled.length ? Math.round(scheduled.reduce((s,h)=>s+h.currentStreak,0)/Math.max(scheduled.length,1)) : 0}</strong></div>`;
+
         const el = document.getElementById('habits-list');
         if (allHabits.length === 0) { el.innerHTML = '<div class="empty"><p>No habits yet. Add one above!</p></div>'; return; }
         const groups = {};
@@ -1268,39 +1733,96 @@ import '../../styles/global.css';
           html += `<div class="habit-group-label">${esc(group)}</div>`;
           habits.forEach(h => {
             const done = todayLogs.some(l => l.habitId === h.id);
-            html += `<div class="habit-item" onclick="toggleHabit('${h.id}', ${done})">
+            const scheduled = isDayScheduled(h);
+            const opacity = !scheduled ? 'opacity:0.45;' : '';
+            html += `<div class="habit-item" style="${opacity}" onclick="toggleHabit('${h.id}', ${done})">
               <div class="habit-check ${done ? 'done' : ''}"></div>
               <div class="habit-name">${esc(h.name)}</div>
-              <div style="text-align:right;">
-                <div class="habit-streak">${h.currentStreak > 0 ? h.currentStreak + ' streak' : ''}</div>
+              <div style="text-align:right;flex-shrink:0;">
+                ${h.currentStreak > 0 ? `<div class="habit-streak">${h.currentStreak} 🔥</div>` : ''}
                 <div class="habit-freq">${h.frequency}</div>
               </div>
+              <button class="habit-edit-btn" onclick="event.stopPropagation();editHabit('${h.id}')">✎</button>
             </div>`;
           });
         }
         el.innerHTML = html;
       }
 
+      function renderHabitStats() {
+        const el = document.getElementById('habits-stats-list');
+        if (allHabits.length === 0) { el.innerHTML = '<div class="empty"><p>No habits yet.</p></div>'; return; }
+        const logsByHabit = {};
+        allRecentLogs.forEach(l => { if (!logsByHabit[l.habitId]) logsByHabit[l.habitId] = new Set(); logsByHabit[l.habitId].add(l.date); });
+
+        // Build 90-day date range
+        const days = [];
+        const today = clientToday();
+        for (let i = 89; i >= 0; i--) {
+          const d = new Date(today + 'T12:00:00Z');
+          d.setUTCDate(d.getUTCDate() - i);
+          days.push(d.toISOString().slice(0, 10));
+        }
+
+        let html = '';
+        allHabits.forEach(h => {
+          const logs = logsByHabit[h.id] || new Set();
+          const heatmap = days.map(d => `<div class="heatmap-cell ${logs.has(d) ? 'done' : 'empty'}" title="${d}"></div>`).join('');
+          html += `<div class="habit-stats-row">
+            <div style="flex:1;">
+              <div class="habit-stats-name">${esc(h.name)}</div>
+              <div class="habit-stats-meta">
+                <span><strong>${h.currentStreak}</strong> streak</span>
+                <span>best <strong>${h.longestStreak}</strong></span>
+                <span>total <strong>${h.totalCompletions}</strong></span>
+                <span style="font-size:11px;color:var(--color-warm-400);">${h.frequency}</span>
+              </div>
+              <div class="heatmap-row">${heatmap}</div>
+            </div>
+            <button class="habit-edit-btn" onclick="editHabit('${h.id}')">✎</button>
+          </div>`;
+        });
+        el.innerHTML = html || '<div class="empty"><p>No habits yet.</p></div>';
+      }
+
+      // Habit modal
+      const habitModal = document.getElementById('habit-modal');
+      const habitModalForm = document.getElementById('habit-modal-form');
+
       document.getElementById('habit-add-btn').addEventListener('click', () => {
-        habitFormCard.style.display = 'block';
-        habitForm.reset();
-        habitForm.name.focus();
+        habitModalForm.reset();
+        document.getElementById('habit-modal-title').textContent = 'Add Habit';
+        populateVentureDropdown('habit-venture-select');
+        habitModal.classList.add('open');
       });
+      document.getElementById('habit-modal-close').addEventListener('click', () => habitModal.classList.remove('open'));
+      habitModal.addEventListener('click', e => { if (e.target === habitModal) habitModal.classList.remove('open'); });
 
-      document.getElementById('habit-cancel').addEventListener('click', () => {
-        habitFormCard.style.display = 'none';
-        habitForm.reset();
-      });
+      window.editHabit = function(id) {
+        const h = allHabits.find(x => x.id === id);
+        if (!h) return;
+        habitModalForm.reset();
+        habitModalForm.id.value = h.id;
+        habitModalForm.name.value = h.name;
+        habitModalForm.frequency.value = h.frequency;
+        habitModalForm.stackGroup.value = h.stackGroup || '';
+        habitModalForm.valueLabel.value = h.valueLabel || '';
+        habitModalForm.scheduleDays.value = h.scheduleDays || '';
+        document.getElementById('habit-modal-title').textContent = 'Edit Habit';
+        populateVentureDropdown('habit-venture-select', h.ventureId);
+        habitModal.classList.add('open');
+      };
 
-      habitForm.addEventListener('submit', async (ev) => {
+      habitModalForm.addEventListener('submit', async (ev) => {
         ev.preventDefault();
-        const fd = new FormData(habitForm);
+        const fd = new FormData(habitModalForm);
         const body = Object.fromEntries(fd);
         body.action = 'save';
+        body.valueType = body.valueLabel ? 'numeric' : '';
         if (!body.id) delete body.id;
         try {
           const res = await fetch('/api/habits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-          if (res.ok) { habitFormCard.style.display = 'none'; habitForm.reset(); loadHabits(); }
+          if (res.ok) { habitModal.classList.remove('open'); loadHabits(); }
           else showStatus('habits-status', 'Failed to save.', 'error');
         } catch { showStatus('habits-status', 'Network error.', 'error'); }
       });
@@ -1313,6 +1835,634 @@ import '../../styles/global.css';
           loadHabits();
         } catch {}
       };
+
+      // ═══════════════════ TODOS ═══════════════════
+      let allTodos = [];
+      let todoFilter = 'active';
+      let allVentures = [];
+
+      async function loadTodos() {
+        try {
+          const [todosRes, venturesRes] = await Promise.all([
+            fetch('/api/todos'),
+            allVentures.length ? Promise.resolve(null) : fetch('/api/intention?today=' + clientToday()),
+          ]);
+          const data = await todosRes.json();
+          allTodos = data.todos || [];
+          if (venturesRes) {
+            const vd = await venturesRes.json();
+            allVentures = vd.ventures || [];
+          }
+          renderTodos();
+        } catch { showStatus('todos-status', 'Failed to load todos.', 'error'); }
+      }
+
+      function renderTodos() {
+        let list = allTodos;
+        if (todoFilter === 'active') list = allTodos.filter(t => !t.completed);
+        else if (todoFilter === 'done') list = allTodos.filter(t => t.completed);
+
+        const el = document.getElementById('todos-list');
+        if (list.length === 0) { el.innerHTML = '<div class="empty"><p>' + (todoFilter === 'done' ? 'No completed tasks.' : 'Nothing here!') + '</p></div>'; return; }
+
+        el.innerHTML = list.map(t => {
+          const today = clientToday();
+          const overdue = t.dueDate && t.dueDate < today && !t.completed;
+          const venture = allVentures.find(v => v.id === t.ventureId);
+          const pLabel = ['', 'P1', 'P2', 'P3'][t.priority] || '';
+          return `<div class="todo-item">
+            <div class="todo-check ${t.completed ? 'done' : ''}" onclick="toggleTodo('${t.id}', ${!!t.completed})"></div>
+            <div class="todo-text-wrap">
+              <div class="todo-text ${t.completed ? 'done' : ''}">${esc(t.text)}</div>
+              <div class="todo-meta">
+                ${pLabel ? `<span class="priority-badge priority-${t.priority}">${pLabel}</span>` : ''}
+                ${t.dueDate ? `<span class="due-date-label ${overdue ? 'overdue' : ''}">${overdue ? '⚠ ' : ''}${t.dueDate}</span>` : ''}
+                ${venture ? `<span class="venture-chip" style="background:${venture.color}22;color:${venture.color};">${esc(venture.icon || '')} ${esc(venture.name)}</span>` : ''}
+              </div>
+            </div>
+            <div class="todo-actions">
+              <button class="btn btn-ghost btn-sm" onclick="editTodo('${t.id}')">✎</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTodo('${t.id}')">✕</button>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      document.querySelectorAll('.todo-filter-bar .filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.todo-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          todoFilter = btn.dataset.filter;
+          renderTodos();
+        });
+      });
+
+      // Todo modal
+      const todoModal = document.getElementById('todo-modal');
+      const todoForm = document.getElementById('todo-form');
+
+      document.getElementById('todo-add-btn').addEventListener('click', () => {
+        todoForm.reset();
+        document.getElementById('todo-modal-title').textContent = 'Add To-Do';
+        populateVentureDropdown('todo-venture-select');
+        todoModal.classList.add('open');
+      });
+      document.getElementById('todo-modal-close').addEventListener('click', () => todoModal.classList.remove('open'));
+      todoModal.addEventListener('click', e => { if (e.target === todoModal) todoModal.classList.remove('open'); });
+
+      window.editTodo = function(id) {
+        const t = allTodos.find(x => x.id === id);
+        if (!t) return;
+        todoForm.reset();
+        todoForm.id.value = t.id;
+        todoForm.text.value = t.text;
+        todoForm.priority.value = t.priority;
+        todoForm.dueDate.value = t.dueDate || '';
+        document.getElementById('todo-modal-title').textContent = 'Edit To-Do';
+        populateVentureDropdown('todo-venture-select', t.ventureId);
+        todoModal.classList.add('open');
+      };
+
+      todoForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(todoForm);
+        const body = Object.fromEntries(fd);
+        if (!body.id) delete body.id;
+        try {
+          const res = await fetch('/api/todos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { todoModal.classList.remove('open'); loadTodos(); }
+          else showStatus('todos-status', 'Failed to save.', 'error');
+        } catch { showStatus('todos-status', 'Network error.', 'error'); }
+      });
+
+      window.toggleTodo = async function(id, done) {
+        try {
+          const t = allTodos.find(x => x.id === id);
+          if (!t) return;
+          await fetch('/api/todos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, text: t.text, completed: !done }) });
+          loadTodos();
+        } catch {}
+      };
+
+      window.deleteTodo = async function(id) {
+        if (!confirm('Delete this task?')) return;
+        await fetch('/api/todos', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+        loadTodos();
+      };
+
+      // ═══════════════════ INTENTIONS ═══════════════════
+      let allGoals = [], allCheckins = [], todayCheckins = [], weekCheckins = [];
+      let activeVentureFilter = null;
+      let intView = 'horizon';
+
+      async function loadIntentions() {
+        try {
+          const today = clientToday();
+          const res = await fetch('/api/intention?today=' + today);
+          const data = await res.json();
+          allVentures = data.ventures || [];
+          allGoals = data.goals || [];
+          allCheckins = data.recentCheckins || [];
+          todayCheckins = data.todayCheckins || [];
+          weekCheckins = data.weekCheckins || [];
+          renderVentureRail();
+          renderGoals();
+        } catch { console.error('Failed to load intentions'); }
+      }
+
+      function renderVentureRail() {
+        const active = allVentures.filter(v => v.status === 'active');
+        let html = `<div class="venture-item ${!activeVentureFilter ? 'active' : ''}" onclick="setVentureFilter(null)">
+          <div class="venture-dot" style="background:var(--color-warm-300);"></div>
+          <div class="venture-name">All</div>
+        </div>`;
+        active.forEach(v => {
+          html += `<div class="venture-item ${activeVentureFilter === v.id ? 'active' : ''}" onclick="setVentureFilter('${v.id}')">
+            <div class="venture-dot" style="background:${v.color};"></div>
+            <div class="venture-name">${esc(v.icon ? v.icon + ' ' : '')}${esc(v.name)}</div>
+            <button class="venture-edit" onclick="event.stopPropagation();editVenture('${v.id}')">✎</button>
+          </div>`;
+        });
+        document.getElementById('venture-list').innerHTML = html;
+      }
+
+      window.setVentureFilter = function(id) {
+        activeVentureFilter = id;
+        renderVentureRail();
+        renderGoals();
+      };
+
+      function goalsForRender() {
+        if (!activeVentureFilter) return allGoals;
+        return allGoals.filter(g => {
+          const ids = (g.ventureIds || '').split(',').map(x => x.trim());
+          return ids.includes(activeVentureFilter);
+        });
+      }
+
+      function goalVentureChips(g) {
+        const ids = (g.ventureIds || '').split(',').map(x => x.trim()).filter(Boolean);
+        return ids.map(vid => {
+          const v = allVentures.find(x => x.id === vid);
+          if (!v) return '';
+          return `<span class="venture-chip" style="background:${v.color}22;color:${v.color};font-size:11px;padding:1px 6px;border-radius:3px;">${esc(v.icon || '')} ${esc(v.name)}</span>`;
+        }).join('');
+      }
+
+      function renderGoalCard(g) {
+        const checkedToday = todayCheckins.some(c => c.goalId === g.id);
+        const pBadge = g.priority > 0 ? `<span class="p-badge p-badge-${g.priority}">P${g.priority}</span>` : '';
+        const sizeBadge = g.size ? `<span class="size-badge">${g.size}</span>` : '';
+        const statusBadge = `<span class="status-badge status-${g.status}">${g.status}</span>`;
+        const why = g.why ? `<div class="goal-why">"${esc(g.why)}"</div>` : '';
+        const checkinBtn = `<button class="checkin-btn ${checkedToday ? 'checked' : ''}" onclick="event.stopPropagation();toggleCheckin('${g.id}', ${checkedToday})">${checkedToday ? '✓ Done today' : '+ Mark today'}</button>`;
+        return `<div class="goal-card" style="border-left-color:${goalVentureColor(g)};" onclick="expandGoal('${g.id}', this)">
+          <div class="goal-card-header">
+            <div class="goal-title">${esc(g.title)}</div>
+            <div class="goal-badges">${pBadge}${sizeBadge}${statusBadge}${goalVentureChips(g)}</div>
+          </div>
+          <div class="goal-detail" id="goal-detail-${g.id}">
+            ${why}
+            ${checkinBtn}
+            <div class="goal-actions">
+              <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editGoal('${g.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteGoal('${g.id}')">Delete</button>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function goalVentureColor(g) {
+        const ids = (g.ventureIds || '').split(',').map(x => x.trim()).filter(Boolean);
+        const v = allVentures.find(x => x.id === ids[0]);
+        return v ? v.color : 'var(--color-warm-200)';
+      }
+
+      window.expandGoal = function(id, card) {
+        const detail = document.getElementById('goal-detail-' + id);
+        if (!detail) return;
+        const isOpen = detail.classList.contains('show');
+        detail.classList.toggle('show', !isOpen);
+        card.classList.toggle('expanded', !isOpen);
+      };
+
+      function renderGoals() {
+        const goals = goalsForRender();
+        const horizons = ['daily', 'weekly', 'quarterly', 'yearly'];
+        if (intView === 'horizon') {
+          horizons.forEach(h => {
+            const filtered = goals.filter(g => g.horizon === h);
+            const el = document.getElementById('goals-' + h);
+            el.innerHTML = filtered.length ? filtered.map(renderGoalCard).join('') :
+              '<div style="font-size:13px;color:var(--color-warm-400);padding:8px 0;">No goals yet.</div>';
+          });
+        } else {
+          const lanes = ['backlog','todo','working','waiting','done'];
+          lanes.forEach(s => {
+            const filtered = goals.filter(g => g.status === s);
+            const el = document.getElementById('kb-' + s);
+            el.innerHTML = filtered.length ? filtered.map(g =>
+              `<div class="kanban-card" onclick="editGoal('${g.id}')">
+                <div style="font-weight:600;font-size:13px;margin-bottom:4px;">${esc(g.title)}</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;">${goalVentureChips(g)}${g.size ? `<span class="size-badge">${g.size}</span>` : ''}</div>
+              </div>`
+            ).join('') : '<div style="font-size:12px;color:var(--color-warm-400);padding:4px;">—</div>';
+          });
+        }
+      }
+
+      document.querySelectorAll('.int-view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.int-view-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          intView = btn.dataset.view;
+          document.getElementById('int-view-horizon').style.display = intView === 'horizon' ? '' : 'none';
+          document.getElementById('int-view-kanban').style.display = intView === 'kanban' ? '' : 'none';
+          renderGoals();
+        });
+      });
+
+      // Venture modal
+      const ventureModal = document.getElementById('venture-modal');
+      const ventureForm = document.getElementById('venture-form');
+
+      document.getElementById('venture-add-btn').addEventListener('click', () => {
+        ventureForm.reset();
+        document.getElementById('venture-modal-title').textContent = 'Add Venture';
+        ventureModal.classList.add('open');
+      });
+      document.getElementById('venture-modal-close').addEventListener('click', () => ventureModal.classList.remove('open'));
+      ventureModal.addEventListener('click', e => { if (e.target === ventureModal) ventureModal.classList.remove('open'); });
+
+      window.editVenture = function(id) {
+        const v = allVentures.find(x => x.id === id);
+        if (!v) return;
+        ventureForm.reset();
+        ventureForm.id.value = v.id;
+        ventureForm.name.value = v.name;
+        ventureForm.color.value = v.color;
+        ventureForm.icon.value = v.icon || '';
+        ventureForm.tagline.value = v.tagline || '';
+        document.getElementById('venture-modal-title').textContent = 'Edit Venture';
+        ventureModal.classList.add('open');
+      };
+
+      ventureForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const body = Object.fromEntries(new FormData(ventureForm));
+        if (!body.id) delete body.id;
+        body.action = 'save-venture';
+        try {
+          const res = await fetch('/api/intention', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { ventureModal.classList.remove('open'); loadIntentions(); }
+        } catch {}
+      });
+
+      // Goal modal
+      const goalModal = document.getElementById('goal-modal');
+      const goalForm = document.getElementById('goal-form');
+
+      function populateGoalVentureCheckboxes(selectedIds) {
+        const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds || '').split(',').filter(Boolean);
+        const el = document.getElementById('goal-venture-checkboxes');
+        el.innerHTML = allVentures.filter(v => v.status === 'active').map(v =>
+          `<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" name="ventureIds" value="${v.id}" ${ids.includes(v.id) ? 'checked' : ''} />
+            <span class="venture-dot" style="background:${v.color};"></span>${esc(v.name)}
+          </label>`
+        ).join('');
+      }
+
+      document.getElementById('goal-add-btn').addEventListener('click', () => {
+        goalForm.reset();
+        document.getElementById('goal-modal-title').textContent = 'Add Goal';
+        populateGoalVentureCheckboxes([]);
+        goalModal.classList.add('open');
+      });
+      document.getElementById('goal-modal-close').addEventListener('click', () => goalModal.classList.remove('open'));
+      goalModal.addEventListener('click', e => { if (e.target === goalModal) goalModal.classList.remove('open'); });
+
+      window.editGoal = function(id) {
+        const g = allGoals.find(x => x.id === id);
+        if (!g) return;
+        goalForm.reset();
+        goalForm.id.value = g.id;
+        goalForm.title.value = g.title;
+        goalForm.horizon.value = g.horizon;
+        goalForm.priority.value = g.priority;
+        goalForm.size.value = g.size || '';
+        goalForm.status.value = g.status;
+        goalForm.why.value = g.why || '';
+        goalForm.targetDate.value = g.targetDate || '';
+        document.getElementById('goal-modal-title').textContent = 'Edit Goal';
+        populateGoalVentureCheckboxes(g.ventureIds || '');
+        goalModal.classList.add('open');
+      };
+
+      window.deleteGoal = async function(id) {
+        if (!confirm('Delete this goal and all its check-ins?')) return;
+        await fetch('/api/intention', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete-goal', id }) });
+        loadIntentions();
+      };
+
+      goalForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(goalForm);
+        const body = { action: 'save-goal' };
+        const checked = [...goalForm.querySelectorAll('[name="ventureIds"]:checked')].map(cb => cb.value);
+        fd.forEach((v, k) => { if (k !== 'ventureIds') body[k] = v; });
+        body.ventureIds = checked.join(',');
+        if (!body.id) delete body.id;
+        try {
+          const res = await fetch('/api/intention', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { goalModal.classList.remove('open'); loadIntentions(); }
+        } catch {}
+      });
+
+      window.toggleCheckin = async function(goalId, done) {
+        const action = done ? 'uncheckin' : 'checkin';
+        const today = clientToday();
+        try {
+          await fetch('/api/intention', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, goalId, date: today }) });
+          loadIntentions();
+        } catch {}
+      };
+
+      // ═══════════════════ OFFICE WORK ═══════════════════
+      let owCategories = [], owSessions = [], owTodayTotals = [], owWeekTotals = [], owMonthTotals = [];
+      let owView = 'analytics', owAnalyticsRange = 'week', owSessionRange = '30';
+      let owTimerActive = false, owTimerCategoryId = null, owTimerStart = null, owTimerInterval = null;
+
+      async function loadOfficeWork() {
+        try {
+          const res = await fetch('/api/office-work?today=' + clientToday());
+          const data = await res.json();
+          owCategories = data.categories || [];
+          owSessions = data.sessions || [];
+          owTodayTotals = data.todayTotals || [];
+          owWeekTotals = data.weekTotals || [];
+          owMonthTotals = data.monthTotals || [];
+          renderOwView();
+        } catch { showStatus('ow-status', 'Failed to load office work.', 'error'); }
+      }
+
+      function owFmtSec(s) {
+        const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+      }
+      function owFmtHMS(s) {
+        const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+      }
+
+      function renderOwView() {
+        if (owView === 'analytics') renderOwAnalytics();
+        else if (owView === 'categories') renderOwCategories();
+        else if (owView === 'sessions') renderOwSessions();
+      }
+
+      function renderOwAnalytics() {
+        const totals = owAnalyticsRange === 'week' ? owWeekTotals : owMonthTotals;
+        const maxSec = Math.max(...totals.map(t => t.total), 1);
+        const totalSec = totals.reduce((s, t) => s + t.total, 0);
+        let html = '';
+        totals.sort((a, b) => b.total - a.total).forEach(t => {
+          const cat = owCategories.find(c => c.id === t.categoryId);
+          if (!cat) return;
+          const pct = (t.total / maxSec) * 100;
+          html += `<div class="ow-bar-row">
+            <div class="ow-bar-label" title="${esc(cat.name)}">${esc(cat.name)}</div>
+            <div class="ow-bar-track"><div class="ow-bar-fill" style="width:${pct}%;background:${cat.color};"></div></div>
+            <div class="ow-bar-value">${owFmtSec(t.total)}</div>
+          </div>`;
+        });
+        document.getElementById('ow-analytics-bars').innerHTML = html || '<div class="empty"><p>No sessions yet.</p></div>';
+        document.getElementById('ow-analytics-total').textContent = totalSec ? 'Total: ' + owFmtSec(totalSec) : '';
+      }
+
+      function renderOwCategories() {
+        const totals = owWeekTotals;
+        const el = document.getElementById('ow-cat-list');
+        if (!owCategories.length) { el.innerHTML = '<div class="empty"><p>No categories yet.</p></div>'; return; }
+        el.innerHTML = owCategories.map(c => {
+          const t = totals.find(x => x.categoryId === c.id);
+          return `<div class="ow-cat-item">
+            <div class="ow-cat-dot" style="background:${c.color};"></div>
+            <div>
+              <div class="ow-cat-name">${esc(c.name)}</div>
+              <div class="ow-cat-kind">${c.kind}</div>
+            </div>
+            <div class="ow-cat-total">${t ? owFmtSec(t.total) : '0m'}</div>
+            <button class="btn btn-sage btn-sm" onclick="startOwTimer('${c.id}')">▶ Start</button>
+            <button class="btn btn-ghost btn-sm" onclick="editOwCat('${c.id}')">✎</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteOwCat('${c.id}')">✕</button>
+          </div>`;
+        }).join('');
+      }
+
+      function renderOwSessions() {
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - parseInt(owSessionRange));
+        const cutStr = cutoff.toISOString().slice(0, 10);
+        const filtered = owSessions.filter(s => s.date >= cutStr);
+        const el = document.getElementById('ow-sessions-list');
+        if (!filtered.length) { el.innerHTML = '<div class="empty"><p>No sessions yet.</p></div>'; return; }
+        el.innerHTML = '<div>' + filtered.map(s => {
+          const cat = owCategories.find(c => c.id === s.categoryId);
+          return `<div class="ow-session-item">
+            <div class="ow-session-date">${s.date}</div>
+            <div class="ow-session-cat" style="color:${cat?.color || 'inherit'}">${esc(cat?.name || '?')}</div>
+            <div style="flex:1;font-size:12px;color:var(--color-warm-500);">${esc(s.notes || '')}</div>
+            <div class="ow-session-dur">${owFmtSec(s.durationSec)}</div>
+            <button class="btn btn-danger btn-sm" onclick="deleteOwSession('${s.id}')">✕</button>
+          </div>`;
+        }).join('') + '</div>';
+      }
+
+      // OW view toggle
+      document.querySelectorAll('.ow-view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.ow-view-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          owView = btn.dataset.view;
+          document.getElementById('ow-view-analytics').style.display = owView === 'analytics' ? '' : 'none';
+          document.getElementById('ow-view-categories').style.display = owView === 'categories' ? '' : 'none';
+          document.getElementById('ow-view-sessions').style.display = owView === 'sessions' ? '' : 'none';
+          renderOwView();
+        });
+      });
+
+      document.querySelectorAll('.ow-range-btn[data-range]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.ow-range-btn[data-range]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          owAnalyticsRange = btn.dataset.range;
+          renderOwAnalytics();
+        });
+      });
+
+      document.querySelectorAll('.ow-range-btn[data-srange]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.ow-range-btn[data-srange]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          owSessionRange = btn.dataset.srange;
+          renderOwSessions();
+        });
+      });
+
+      // Timer
+      window.startOwTimer = function(categoryId) {
+        if (owTimerActive) stopOwTimer(false);
+        owTimerActive = true;
+        owTimerCategoryId = categoryId;
+        owTimerStart = Date.now();
+        localStorage.setItem('owTimer', JSON.stringify({ categoryId, start: owTimerStart }));
+        const cat = owCategories.find(c => c.id === categoryId);
+        const banner = document.getElementById('ow-timer-banner');
+        document.getElementById('ow-banner-cat').textContent = cat?.name || '';
+        banner.style.display = 'flex';
+        owTimerInterval = setInterval(updateOwTimerDisplay, 1000);
+        updateOwTimerDisplay();
+      };
+
+      function updateOwTimerDisplay() {
+        if (!owTimerStart) return;
+        const elapsed = Math.floor((Date.now() - owTimerStart) / 1000);
+        document.getElementById('ow-banner-time').textContent = owFmtHMS(elapsed);
+      }
+
+      async function stopOwTimer(save = true) {
+        clearInterval(owTimerInterval);
+        owTimerInterval = null;
+        if (save && owTimerCategoryId && owTimerStart) {
+          const endedAt = new Date().toISOString();
+          const startedAt = new Date(owTimerStart).toISOString();
+          const durationSec = Math.floor((Date.now() - owTimerStart) / 1000);
+          if (durationSec > 10) {
+            await fetch('/api/office-work', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'log-session', categoryId: owTimerCategoryId, startedAt, endedAt, durationSec }) });
+            loadOfficeWork();
+          }
+        }
+        owTimerActive = false;
+        owTimerCategoryId = null;
+        owTimerStart = null;
+        localStorage.removeItem('owTimer');
+        document.getElementById('ow-timer-banner').style.display = 'none';
+      }
+
+      document.getElementById('ow-banner-stop').addEventListener('click', () => stopOwTimer(true));
+
+      // Restore timer from localStorage on page load
+      (function restoreTimer() {
+        const saved = localStorage.getItem('owTimer');
+        if (!saved) return;
+        try {
+          const { categoryId, start } = JSON.parse(saved);
+          owTimerActive = true;
+          owTimerCategoryId = categoryId;
+          owTimerStart = start;
+          const banner = document.getElementById('ow-timer-banner');
+          banner.style.display = 'flex';
+          owTimerInterval = setInterval(updateOwTimerDisplay, 1000);
+          // Update category name once categories are loaded
+          document.addEventListener('owCategoriesLoaded', () => {
+            const cat = owCategories.find(c => c.id === categoryId);
+            document.getElementById('ow-banner-cat').textContent = cat?.name || '';
+          });
+          updateOwTimerDisplay();
+        } catch { localStorage.removeItem('owTimer'); }
+      })();
+
+      // OW category modal
+      const owCatModal = document.getElementById('ow-cat-modal');
+      const owCatForm = document.getElementById('ow-cat-form');
+
+      document.getElementById('ow-cat-add-btn').addEventListener('click', () => {
+        owCatForm.reset();
+        document.getElementById('ow-cat-modal-title').textContent = 'Add Category';
+        owCatModal.classList.add('open');
+      });
+      document.getElementById('ow-cat-modal-close').addEventListener('click', () => owCatModal.classList.remove('open'));
+      owCatModal.addEventListener('click', e => { if (e.target === owCatModal) owCatModal.classList.remove('open'); });
+
+      window.editOwCat = function(id) {
+        const c = owCategories.find(x => x.id === id);
+        if (!c) return;
+        owCatForm.reset();
+        owCatForm.id.value = c.id;
+        owCatForm.name.value = c.name;
+        owCatForm.color.value = c.color;
+        owCatForm.kind.value = c.kind;
+        document.getElementById('ow-cat-modal-title').textContent = 'Edit Category';
+        owCatModal.classList.add('open');
+      };
+
+      window.deleteOwCat = async function(id) {
+        if (!confirm('Archive this category?')) return;
+        await fetch('/api/office-work', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete-category', id }) });
+        loadOfficeWork();
+      };
+
+      owCatForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const body = Object.fromEntries(new FormData(owCatForm));
+        if (!body.id) delete body.id;
+        body.action = 'save-category';
+        try {
+          const res = await fetch('/api/office-work', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { owCatModal.classList.remove('open'); loadOfficeWork(); }
+        } catch {}
+      });
+
+      // OW session manual log
+      const owSessionModal = document.getElementById('ow-session-modal');
+      const owSessionForm = document.getElementById('ow-session-form');
+
+      document.getElementById('ow-session-add-btn').addEventListener('click', () => {
+        owSessionForm.reset();
+        owSessionForm.date.value = clientToday();
+        document.getElementById('ow-session-cat-select').innerHTML =
+          owCategories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+        owSessionModal.classList.add('open');
+      });
+      document.getElementById('ow-session-modal-close').addEventListener('click', () => owSessionModal.classList.remove('open'));
+      owSessionModal.addEventListener('click', e => { if (e.target === owSessionModal) owSessionModal.classList.remove('open'); });
+
+      owSessionForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const fd = new FormData(owSessionForm);
+        const durationMin = parseInt(fd.get('durationMin')) || 0;
+        const durationSec = durationMin * 60;
+        const date = fd.get('date');
+        const startedAt = date + 'T09:00:00.000Z';
+        const endedAt = new Date(new Date(startedAt).getTime() + durationSec * 1000).toISOString();
+        const body = { action: 'log-session', categoryId: fd.get('categoryId'), startedAt, endedAt, durationSec, date, notes: fd.get('notes') };
+        try {
+          const res = await fetch('/api/office-work', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (res.ok) { owSessionModal.classList.remove('open'); loadOfficeWork(); }
+        } catch {}
+      });
+
+      window.deleteOwSession = async function(id) {
+        if (!confirm('Delete this session?')) return;
+        await fetch('/api/office-work', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete-session', id }) });
+        loadOfficeWork();
+      };
+
+      // ═══════════════════ VENTURE DROPDOWN HELPER ═══════════════════
+      function populateVentureDropdown(selectId, selectedId) {
+        const el = document.getElementById(selectId);
+        el.innerHTML = '<option value="">— None —</option>' +
+          allVentures.filter(v => v.status === 'active').map(v =>
+            `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${esc(v.icon ? v.icon + ' ' : '')}${esc(v.name)}</option>`
+          ).join('');
+      }
+
+      // ═══════════════════ SERVICE WORKER REGISTRATION ═══════════════════
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
 
       // ═══════════════════ HELPERS ═══════════════════
       function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }

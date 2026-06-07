@@ -263,9 +263,18 @@ export async function onRequestPost(context) {
 
       const logId = String(Date.now()) + "-" + Math.random().toString(36).slice(2, 6);
       const logNotes = (body.notes || "").trim();
-      await context.env.SITE_DB.prepare(
-        "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, createdAt) VALUES (?, ?, ?, ?, ?)"
-      ).bind(logId, id, today, logNotes, now).run();
+      const logValue = body.value !== undefined ? Number(body.value) : 0;
+
+      const hasValueCol = habit.valueType && habit.valueType !== "";
+      if (hasValueCol) {
+        await context.env.SITE_DB.prepare(
+          "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, value, createdAt) VALUES (?, ?, ?, ?, ?, ?)"
+        ).bind(logId, id, today, logNotes, logValue, now).run();
+      } else {
+        await context.env.SITE_DB.prepare(
+          "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, createdAt) VALUES (?, ?, ?, ?, ?)"
+        ).bind(logId, id, today, logNotes, now).run();
+      }
 
       const { currentStreak, longestStreak } = await recalcStreak(context.env.SITE_DB, id, freq);
 
@@ -351,7 +360,8 @@ export async function onRequestPost(context) {
     }
 
     if (action === "save") {
-      const { id, name, category, frequency, stackGroup, stackOrder, status } = body;
+      const { id, name, category, frequency, stackGroup, stackOrder, status,
+              scheduleDays, valueType, valueLabel, ventureId, goalId } = body;
       if (!name || !name.trim()) {
         return new Response(
           JSON.stringify({ error: "Habit name is required." }),
@@ -367,7 +377,8 @@ export async function onRequestPost(context) {
 
       if (existing) {
         await context.env.SITE_DB.prepare(
-          "UPDATE habits SET name=?, category=?, frequency=?, stackGroup=?, stackOrder=?, status=?, updatedAt=? WHERE id=?"
+          `UPDATE habits SET name=?, category=?, frequency=?, stackGroup=?, stackOrder=?, status=?,
+           scheduleDays=?, valueType=?, valueLabel=?, ventureId=?, goalId=?, updatedAt=? WHERE id=?`
         ).bind(
           name.trim(),
           category || existing.category,
@@ -375,6 +386,11 @@ export async function onRequestPost(context) {
           stackGroup !== undefined ? stackGroup : existing.stackGroup,
           stackOrder !== undefined ? stackOrder : existing.stackOrder,
           status || existing.status,
+          scheduleDays !== undefined ? scheduleDays : existing.scheduleDays,
+          valueType !== undefined ? valueType : existing.valueType,
+          valueLabel !== undefined ? valueLabel : existing.valueLabel,
+          ventureId !== undefined ? ventureId : existing.ventureId,
+          goalId !== undefined ? goalId : existing.goalId,
           now,
           habitId
         ).run();
@@ -388,8 +404,10 @@ export async function onRequestPost(context) {
         }
 
         await context.env.SITE_DB.prepare(
-          `INSERT INTO habits (id, name, category, frequency, stackGroup, stackOrder, currentStreak, longestStreak, totalCompletions, lastCompletedDate, status, createdAt, updatedAt)
-           VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0, '', 'active', ?, ?)`
+          `INSERT INTO habits (id, name, category, frequency, stackGroup, stackOrder,
+           currentStreak, longestStreak, totalCompletions, lastCompletedDate, status,
+           scheduleDays, valueType, valueLabel, ventureId, goalId, createdAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0, '', 'active', ?, ?, ?, ?, ?, ?, ?)`
         ).bind(
           habitId,
           name.trim(),
@@ -397,6 +415,11 @@ export async function onRequestPost(context) {
           frequency || "daily",
           stackGroup || "",
           order,
+          scheduleDays || "",
+          valueType || "",
+          valueLabel || "",
+          ventureId || "",
+          goalId || "",
           now, now
         ).run();
       }
