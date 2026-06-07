@@ -13,7 +13,7 @@ interface Props {
 const { image, imageAlt, video, imagePosition = 'object-center', title, subtitle, overlay = true, compact = false } = Astro.props;
 ---
 
-<section class:list={['relative flex items-center justify-center overflow-hidden', compact ? 'min-h-[50vh]' : 'min-h-screen']}>
+<section class:list={['relative flex items-center justify-center overflow-hidden bg-warm-900', compact ? 'min-h-[50vh]' : 'min-h-screen']}>
   {video ? (
     <video
       autoplay
@@ -21,7 +21,7 @@ const { image, imageAlt, video, imagePosition = 'object-center', title, subtitle
       loop
       playsinline
       poster={image}
-      class="absolute inset-0 w-full h-full object-cover object-[20%_75%]"
+      class="absolute inset-0 w-full h-full object-contain"
     >
       <source src={video} type="video/mp4" />
       <img src={image} alt={imageAlt} class="absolute inset-0 w-full h-full object-cover" />
