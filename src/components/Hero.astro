@@ -21,10 +21,10 @@ const { image, imageAlt, video, imagePosition = 'object-center', title, subtitle
       loop
       playsinline
       poster={image}
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto"
+      class="absolute inset-0 w-full h-full object-cover"
     >
-      <source src={video} type="video/mp4" />
-      <img src={image} alt={imageAlt} class="absolute inset-0 w-full h-full object-cover" />
+      <source src={video} type="video/quicktime" />
+      <source src={video} />
     </video>
   ) : (
     <img
