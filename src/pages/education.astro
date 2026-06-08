@@ -5,8 +5,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Education" description="Spreading Montessori Education for Adolescents — because they need these non-traditional learning environments now more than ever.">
   <div class="pt-20"></div>
 
-  <section class="py-24 px-6 text-center">
-    <div class="max-w-3xl mx-auto">
+  <section class="relative py-24 px-6 text-center overflow-hidden">
+    <img
+      src="/images/montessori-logo.png"
+      alt=""
+      aria-hidden="true"
+      class="absolute inset-0 m-auto w-[70%] max-w-2xl opacity-[0.04] pointer-events-none select-none"
+    />
+    <div class="max-w-3xl mx-auto relative z-10">
       <h1 class="text-4xl md:text-5xl text-warm-800 mb-6">
         Spreading Montessori Education for Adolescents
       </h1>
@@ -19,7 +25,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <img
             src="/images/montessori-logo.png"
             alt="Montessori for Adolescents"
-            class="h-24 w-auto hover:opacity-80 transition-opacity"
+            class="h-48 w-auto hover:opacity-80 transition-opacity"
           />
         </a>
         <a
