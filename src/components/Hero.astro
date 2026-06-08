@@ -23,8 +23,7 @@ const { image, imageAlt, video, imagePosition = 'object-center', title, subtitle
       poster={image}
       class="absolute inset-0 w-full h-full object-cover"
     >
-      <source src={video} type="video/quicktime" />
-      <source src={video} />
+      <source src={video} type="video/mp4" />
     </video>
   ) : (
     <img
