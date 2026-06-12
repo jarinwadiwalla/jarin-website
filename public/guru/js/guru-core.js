@@ -24,7 +24,6 @@ const _tabDataLoaded = new Set(['dashboard']);
 const TAB_LOADERS = {
     website:  () => { loadDrafts(); loadCampaigns(); loadSubscribers(); loadPoems(); loadAboutContent(); loadSettings(); loadEmailTemplates(); },
     goldlist: () => { loadGoldList(); },
-    translation: () => { loadTranslationSessions(); },
     finances: () => { loadFinances(); },
     media:    () => { loadMedia(); },
     calendar: () => { loadCalendar(); loadCalCategories(); },
@@ -32,7 +31,6 @@ const TAB_LOADERS = {
     tools:    () => { loadAudioLibrary(); loadFiles(); },
     comments: () => { loadComments(); },
     workouts: () => { loadWorkouts(); },
-    recovery: () => { loadRecoveryNotes(); },
     officework: () => { loadOfficeWork(); },
     intention: () => { loadIntention(); },
 };
@@ -352,7 +350,7 @@ async function init() {
     // Dashboard-critical loads only — other tabs lazy-load on first visit
     loadDashboardStats();
     loadTodos();
-    loadDashboardSettings(); // single call for focus banner + reading goal + sobriety
+    loadDashboardSettings(); // single call for focus banner + reading goal
     loadCalendar();          // populates today's calendar widget above to-do list
     _tabDataLoaded.add('calendar');
 
@@ -370,9 +368,9 @@ async function init() {
 // init() is called from guru.html after all module scripts are loaded
 
 // ==================== NAV GROUPS ====================
-// Single source of truth for the rail grouping. Drives the mobile bottom-nav
-// half-sheets and the ⌘K palette. The desktop rail markup mirrors this but
-// omits Habits / Health / Recovery (reachable via the dashboard jump-to row).
+// Single source of truth for the rail grouping. Drives the ⌘K palette.
+// The desktop rail markup mirrors this but omits Habits / Health
+// (reachable via the dashboard jump-to row); the mobile strip lists all tabs.
 const NAV_GROUPS = {
     today: { label: 'Today', tabs: [
         { id: 'dashboard',  label: 'Dashboard' },
@@ -381,7 +379,6 @@ const NAV_GROUPS = {
         { id: 'calendar',   label: 'Calendar' },
         { id: 'habits',     label: 'Habits' },
         { id: 'workouts',   label: 'Health' },
-        { id: 'recovery',   label: 'Recovery' },
     ] },
     craft: { label: 'Craft', tabs: [
         { id: 'website',  label: 'Website' },
@@ -389,8 +386,7 @@ const NAV_GROUPS = {
         { id: 'comments', label: 'Comments' },
     ] },
     learn: { label: 'Learn', tabs: [
-        { id: 'goldlist',    label: 'Gold List' },
-        { id: 'translation', label: 'Translation' },
+        { id: 'goldlist', label: 'Gold List' },
     ] },
     operate: { label: 'Operate', tabs: [
         { id: 'finances', label: 'Finances' },
@@ -398,41 +394,23 @@ const NAV_GROUPS = {
     ] },
 };
 
-// ==================== BOTTOM NAV (MOBILE) ====================
-function updateBottomNav() {
+// ==================== MOBILE TAB STRIP ====================
+function updateMobileTabs() {
     const active = document.querySelector('.nav-tab.active')?.dataset.tab;
-    const group = Object.keys(NAV_GROUPS).find(g => NAV_GROUPS[g].tabs.some(t => t.id === active));
-    document.querySelectorAll('.bottom-nav-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.group === group);
+    document.querySelectorAll('.top-tab-item').forEach(item => {
+        const isActive = item.dataset.tab === active;
+        item.classList.toggle('active', isActive);
+        if (isActive) item.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
     });
 }
 
-// Tapping a bottom-nav group opens a half-sheet listing that group's sections
-function openGroupSheet(groupId) {
-    const group = NAV_GROUPS[groupId];
-    if (!group) return;
-    const active = document.querySelector('.nav-tab.active')?.dataset.tab;
-    document.getElementById('groupSheet').innerHTML =
-        `<div class="sheet-title">${group.label}</div>` +
-        group.tabs.map(t =>
-            `<button class="sheet-item${t.id === active ? ' active' : ''}" onclick="switchTab('${t.id}'); closeGroupSheet();">${t.label}</button>`
-        ).join('');
-    document.getElementById('groupSheetOverlay').classList.add('open');
-    document.getElementById('groupSheet').classList.add('open');
-}
-
-function closeGroupSheet() {
-    document.getElementById('groupSheetOverlay').classList.remove('open');
-    document.getElementById('groupSheet').classList.remove('open');
-}
-
-// Sync bottom nav with tab switches
+// Sync the strip with tab switches
 const origSwitchTab = switchTab;
 switchTab = function(tabName) {
     origSwitchTab(tabName);
-    updateBottomNav();
+    updateMobileTabs();
 };
-updateBottomNav(); // initial highlight (dashboard) before any tab switch
+updateMobileTabs(); // initial highlight (dashboard) before any tab switch
 
 // ==================== COMMAND PALETTE (⌘K) ====================
 let _cmdkSel = 0;

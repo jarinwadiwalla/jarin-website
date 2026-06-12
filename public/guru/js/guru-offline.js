@@ -35,7 +35,6 @@ const ONLINE_ONLY = [
     '/api/blog-posts',
     '/api/blog-images',
     '/api/audio',
-    '/api/translation',
     '/api/habits',
     '/api/intention',
     '/api/intention-digest',

@@ -338,7 +338,7 @@
         @media (max-width: 900px) {
             /* ===== BASE ===== */
             body { font-size: 14px; font-weight: 400; color: var(--gray-900); line-height: 1.5; }
-            .main { padding: 10px; padding-bottom: 72px; }
+            .main { padding: 10px; padding-bottom: 16px; }
             .header { padding: 12px 14px; }
             .header h1 { font-size: 17px; }
             .header-meta { font-size: 11px; }
@@ -350,7 +350,7 @@
                 position: fixed;
                 left: 0;
                 right: 0;
-                bottom: calc(56px + env(safe-area-inset-bottom, 4px));
+                bottom: env(safe-area-inset-bottom, 4px);
                 z-index: 199;
                 border-radius: 12px 12px 0 0;
             }
@@ -425,13 +425,6 @@
             /* Focus banner */
             #focusBanner { padding: 10px 14px; font-size: 13px; font-weight: 700; }
 
-            /* Sobriety badges */
-            .ms-badge { padding: 18px 14px; border-radius: 12px; }
-            .ms-badge .ms-days { font-size: 36px; }
-            .ms-badge .ms-label { font-size: 12px; }
-            .ms-badge .ms-name { font-size: 15px; }
-            .ms-badge .ms-detail { font-size: 11px; }
-
             /* Timers */
             #medTimerDisplay, #pomTimerDisplay { font-size: 48px !important; }
 
@@ -463,95 +456,42 @@
             .empty-state p { font-size: 13px; }
             .empty-icon { font-size: 36px; }
 
-            /* Bottom nav bar */
-            .bottom-nav {
+            /* Mobile tab strip */
+            .top-tabs {
                 display: flex !important;
             }
         }
 
-        /* Bottom navigation — mobile only */
-        .bottom-nav {
+        /* Mobile tab strip — sits under the header (mobile only; desktop uses the rail) */
+        .top-tabs {
             display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background: white;
-            border-top: 1px solid var(--gray-200);
-            z-index: 200;
-            justify-content: space-around;
-            padding: 4px 0;
-            padding-bottom: env(safe-area-inset-bottom, 4px);
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
-        }
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            border-bottom: 1px solid var(--gray-200);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             gap: 2px;
-            padding: 6px 4px;
-            cursor: pointer;
-            color: var(--gray-400);
-            font-size: 10px;
-            font-weight: 500;
-            border: none;
-            background: none;
-            transition: color 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            padding: 6px 8px;
         }
-        .bottom-nav-item.active {
-            color: var(--primary);
-        }
-        .bottom-nav-item .nav-icon {
-            font-size: 22px;
-            line-height: 1;
-        }
-
-        /* Group half-sheet — tapping a bottom-nav group opens its sections */
-        .sheet-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(28, 25, 23, 0.45);
-            z-index: 240;
-        }
-        .sheet-overlay.open { display: block; }
-        .group-sheet {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transform: translateY(110%);
-            background: var(--white);
-            z-index: 250;
-            border-radius: 16px 16px 0 0;
-            padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
-            transition: transform 0.22s ease;
-            box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
-        }
-        .group-sheet.open { transform: translateY(0); }
-        .sheet-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--gray-500);
-            margin: 0 12px 10px;
-        }
-        .sheet-item {
-            display: block;
-            width: 100%;
-            text-align: left;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 500;
+        .top-tabs::-webkit-scrollbar { display: none; }
+        .top-tab-item {
+            flex-shrink: 0;
+            padding: 7px 12px;
             border: none;
             background: none;
             border-radius: 8px;
-            color: var(--gray-700);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-500);
             cursor: pointer;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
-        .sheet-item.active { background: var(--light); color: var(--gray-900); font-weight: 600; }
+        .top-tab-item.active {
+            background: var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
 
         /* Command palette (⌘K) — supplement to the rail, not primary nav */
         .cmdk-overlay {
@@ -1176,7 +1116,7 @@
         #confirmModal { z-index: 300; }
 
         /* Generic modal-box used by every modal that opens via inline
-           style="display:flex" (sobriety, office-work, intention, image-upload, etc.).
+           style="display:flex" (office-work, intention, image-upload, etc.).
            Previously this class had no CSS at all — the inner container rendered
            with no background, no padding, no shadow, so the modal content sat
            directly on top of the semi-transparent backdrop with no visual frame.
@@ -1852,36 +1792,6 @@
         }
         .sync-popover.active { display: block; }
 
-        /* Sobriety milestone color picker */
-        .ms-color-btn {
-            width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent;
-            cursor: pointer; transition: border-color 0.2s, transform 0.15s;
-        }
-        .ms-color-btn:hover { transform: scale(1.15); }
-        .ms-color-btn.selected { border-color: var(--gray-800); }
-
-        /* Milestone badge card */
-        .ms-badge {
-            border-radius: 12px; padding: 20px; text-align: center; position: relative;
-            cursor: grab; transition: box-shadow 0.2s, transform 0.15s;
-            user-select: none;
-        }
-        .ms-badge:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-        .ms-badge.dragging { opacity: 0.5; transform: scale(0.95); }
-        .ms-badge .ms-days { font-size: 42px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-        .ms-badge .ms-label { font-size: 13px; opacity: 0.85; margin-bottom: 8px; }
-        .ms-badge .ms-name { font-size: 18px; font-weight: 700; }
-        .ms-badge .ms-detail { font-size: 12px; opacity: 0.7; margin-top: 4px; }
-        .ms-badge .ms-actions {
-            position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .ms-badge:hover .ms-actions { opacity: 1; }
-        .ms-badge .ms-actions button {
-            background: rgba(255,255,255,0.85); border: none; border-radius: 4px;
-            padding: 2px 6px; cursor: pointer; font-size: 12px; color: var(--gray-600);
-        }
-        .ms-badge .ms-actions button:hover { background: white; color: var(--gray-900); }
     </style>
 </head>
 <body>
@@ -1916,7 +1826,6 @@
     <div class="rail-group">
         <div class="rail-label">Learn</div>
         <div class="nav-tab" data-tab="goldlist"><span class="rail-abbr">GL</span><span class="rail-text">Gold List</span></div>
-        <div class="nav-tab" data-tab="translation"><span class="rail-abbr">T</span><span class="rail-text">Translation</span></div>
     </div>
     <div class="rail-group">
         <div class="rail-label">Operate</div>
@@ -1972,6 +1881,22 @@
         <div class="header-meta">jarinwadiwalla.com</div>
     </div>
 </div>
+
+<!-- Mobile tab strip (desktop uses the left rail) -->
+<nav class="top-tabs" id="topTabs">
+    <button class="top-tab-item active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="top-tab-item" data-tab="intention" onclick="switchTab('intention')">Intention</button>
+    <button class="top-tab-item" data-tab="officework" onclick="switchTab('officework')">Office Work</button>
+    <button class="top-tab-item" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button>
+    <button class="top-tab-item" data-tab="habits" onclick="switchTab('habits')">Habits</button>
+    <button class="top-tab-item" data-tab="workouts" onclick="switchTab('workouts')">Health</button>
+    <button class="top-tab-item" data-tab="website" onclick="switchTab('website')">Website</button>
+    <button class="top-tab-item" data-tab="media" onclick="switchTab('media')">Media</button>
+    <button class="top-tab-item" data-tab="comments" onclick="switchTab('comments')">Comments</button>
+    <button class="top-tab-item" data-tab="goldlist" onclick="switchTab('goldlist')">Gold List</button>
+    <button class="top-tab-item" data-tab="finances" onclick="switchTab('finances')">Finances</button>
+    <button class="top-tab-item" data-tab="tools" onclick="switchTab('tools')">Tools</button>
+</nav>
 
 <!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
@@ -2125,11 +2050,6 @@
                 <h2 style="margin-bottom:4px;">Habits</h2>
                 <p style="font-size:12px;color:var(--gray-500);">Daily habits &amp; streaks</p>
             </div>
-            <div class="card" style="cursor:pointer;text-align:center;padding:24px 16px;margin-bottom:0;transition:border-color 0.2s;" onclick="switchTab('workouts'); openSobrietyPanel();" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--gray-200)'">
-                <div style="font-size:28px;margin-bottom:6px;">&#127775;</div>
-                <h2 style="margin-bottom:4px;">Sobriety</h2>
-                <p style="font-size:12px;color:var(--gray-500);" id="sobrietyCardSub">Track your milestones</p>
-            </div>
             <div class="card" style="cursor:pointer;text-align:center;padding:24px 16px;margin-bottom:0;transition:border-color 0.2s;" onclick="toggleNotesPanel('combined')" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--gray-200)'">
                 <div style="font-size:28px;margin-bottom:6px;">&#128221;</div>
                 <h2 style="margin-bottom:4px;">Notes</h2>
@@ -2139,11 +2059,6 @@
                 <div style="font-size:28px;margin-bottom:6px;">&#127947;</div>
                 <h2 style="margin-bottom:4px;">Health</h2>
                 <p style="font-size:12px;color:var(--gray-500);" id="wkCardSub">Lifts, bloodwork &amp; more</p>
-            </div>
-            <div class="card" style="cursor:pointer;text-align:center;padding:24px 16px;margin-bottom:0;transition:border-color 0.2s;" onclick="switchTab('recovery')" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--gray-200)'">
-                <div style="font-size:28px;margin-bottom:6px;">&#128255;</div>
-                <h2 style="margin-bottom:4px;">Recovery</h2>
-                <p style="font-size:12px;color:var(--gray-500);">Notes &amp; protocols</p>
             </div>
         </div>
 
@@ -3265,45 +3180,6 @@
     </div>
 
     <!-- ==================== TRANSLATION TAB ==================== -->
-    <div class="section" id="section-translation">
-        <div class="card">
-            <h2>Translation</h2>
-            <div class="hint-box">
-                <div class="hint-title">Persian Audio → 3-Lane Transcript</div>
-                <p style="font-size:13px;color:var(--gray-600);margin-top:4px;">Upload a WhatsApp voice note or other Persian audio. The pipeline will produce Persian script, Persian in Latin characters, and English — with click-to-define on each word. <strong>Step 1 (upload &amp; sessions list)</strong> is live; transcription &amp; translation arrive in the next commit.</p>
-            </div>
-
-            <!-- Upload zone -->
-            <div id="translationUploadArea" style="border:2px dashed var(--gray-300);border-radius:8px;padding:24px;text-align:center;margin-bottom:20px;background:var(--gray-50);transition:background 0.15s,border-color 0.15s;">
-                <input type="file" id="translationFileInput" multiple accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav,.aac,.flac" style="display:none;" onchange="uploadTranslationAudio(this.files)">
-                <p style="margin:0 0 12px;color:var(--gray-600);font-size:14px;">Drag &amp; drop audio here, or click below to choose files.</p>
-                <button class="btn btn-primary" onclick="document.getElementById('translationFileInput').click()">Choose Files</button>
-                <div id="translationUploadProgress" style="margin-top:12px;font-size:13px;color:var(--gray-600);"></div>
-            </div>
-
-            <!-- Sessions list (shown by default) -->
-            <div id="translationSessionsView">
-                <h3 style="margin-bottom:12px;">Sessions</h3>
-                <div id="translationSessionsList" style="font-size:14px;color:var(--gray-500);">Loading…</div>
-            </div>
-
-            <!-- Session detail (hidden until you open a session) -->
-            <div id="translationSessionDetail" style="display:none;">
-                <button class="btn btn-secondary btn-sm" onclick="closeTranslationSession()" style="margin-bottom:12px;">← Back to sessions</button>
-                <h3 id="translationSessionTitle" style="margin-bottom:8px;"></h3>
-                <div id="translationSessionMeta" style="font-size:12px;color:var(--gray-500);margin-bottom:12px;"></div>
-                <!-- Sticky audio bar: stays pinned below the header + nav-tabs as the
-                     user scrolls through the transcript. top:112 = header (62) + tabs (~50). -->
-                <div id="translationAudioBar" style="position:sticky;top:112px;z-index:50;background:var(--white);padding:8px 0 6px;margin-bottom:12px;border-bottom:1px solid var(--gray-100);">
-                    <audio id="translationAudio" controls preload="metadata" style="width:100%;display:block;"></audio>
-                </div>
-                <div id="translationTranscriptArea" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:16px;color:var(--gray-600);font-size:14px;">
-                    <em>Transcription &amp; translation arrive in the next commit. For now, you can play back the uploaded audio to confirm it landed correctly.</em>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- ==================== FINANCES ==================== -->
     <div class="section" id="section-finances">
         <div class="card">
@@ -3715,90 +3591,8 @@
     <div class="section" id="section-workouts">
         <div style="margin-bottom:16px;display:flex;gap:8px;">
             <button class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">&larr; Dashboard</button>
-            <button class="btn btn-secondary btn-sm" onclick="toggleSobrietyPanel()">Sobriety</button>
         </div>
 
-        <!-- Sobriety Milestones Panel (lives in Health — opened via the button above or the dashboard jump-to row) -->
-        <div class="card" id="sobrietyPanel" style="display:none;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                <h2 style="margin-bottom:0;">Sobriety Milestones</h2>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn btn-primary btn-sm" onclick="openAddMilestone()">+ Add Milestone</button>
-                    <button class="btn btn-secondary btn-sm" onclick="toggleSobrietyPanel()">Close</button>
-                </div>
-            </div>
-            <div id="sobrietyMilestones" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
-        </div>
-
-        <!-- Add/Edit Milestone Modal -->
-        <div class="modal-overlay" id="milestoneModal" style="display:none;">
-            <div class="modal-box" style="max-width:420px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 id="milestoneModalTitle">Add Milestone</h3>
-                    <button onclick="closeMilestoneModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);">&times;</button>
-                </div>
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="milestoneNameInput" placeholder="e.g. Alcohol, Caffeine, Sugar...">
-                </div>
-                <div class="form-group">
-                    <label>Start Date & Time (Day 1 of sobriety)</label>
-                    <input type="datetime-local" id="milestoneDateInput">
-                </div>
-                <div class="form-group">
-                    <label>Color</label>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="milestoneColorPicker">
-                        <button type="button" class="ms-color-btn" data-color="#8b5cf6" style="background:#8b5cf6;" onclick="selectMilestoneColor('#8b5cf6')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#3b82f6" style="background:#3b82f6;" onclick="selectMilestoneColor('#3b82f6')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#10b981" style="background:#10b981;" onclick="selectMilestoneColor('#10b981')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#f59e0b" style="background:#f59e0b;" onclick="selectMilestoneColor('#f59e0b')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#ef4444" style="background:#ef4444;" onclick="selectMilestoneColor('#ef4444')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#ec4899" style="background:#ec4899;" onclick="selectMilestoneColor('#ec4899')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#06b6d4" style="background:#06b6d4;" onclick="selectMilestoneColor('#06b6d4')"></button>
-                        <button type="button" class="ms-color-btn" data-color="#84cc16" style="background:#84cc16;" onclick="selectMilestoneColor('#84cc16')"></button>
-                    </div>
-                </div>
-                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
-                    <button class="btn btn-secondary btn-sm" onclick="closeMilestoneModal()">Cancel</button>
-                    <button class="btn btn-primary btn-sm" onclick="saveMilestone()">Save</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reset Milestone Modal -->
-        <div class="modal-overlay" id="resetMilestoneModal" style="display:none;">
-            <div class="modal-box" style="max-width:440px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 id="resetMilestoneTitle">Reset Milestone</h3>
-                    <button onclick="closeResetModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);">&times;</button>
-                </div>
-                <div id="resetMilestoneSummary" style="background:var(--gray-50);border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--gray-600);"></div>
-                <div class="form-group">
-                    <label>New Sobriety Start Date & Time</label>
-                    <input type="datetime-local" id="resetMilestoneDateInput">
-                </div>
-                <div class="form-group">
-                    <label>Note (why are you resetting?)</label>
-                    <textarea id="resetMilestoneNote" rows="3" placeholder="Optional — record what happened so you can reflect later..." style="width:100%;resize:vertical;"></textarea>
-                </div>
-                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
-                    <button class="btn btn-secondary btn-sm" onclick="closeResetModal()">Cancel</button>
-                    <button class="btn btn-sm" style="background:var(--red);color:white;" onclick="confirmResetMilestone()">Reset Counter</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reset History Modal -->
-        <div class="modal-overlay" id="resetHistoryModal" style="display:none;">
-            <div class="modal-box" style="max-width:520px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 id="resetHistoryTitle">Reset History</h3>
-                    <button onclick="document.getElementById('resetHistoryModal').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);">&times;</button>
-                </div>
-                <div id="resetHistoryStats" style="margin-bottom:16px;"></div>
-                <div id="resetHistoryList"></div>
-            </div>
-        </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
             <div class="stat-card"><div class="label">This Week</div><div class="value" id="wkStatWeek">0</div></div>
             <div class="stat-card"><div class="label">This Month</div><div class="value" id="wkStatMonth">0</div></div>
@@ -3831,25 +3625,6 @@
             <div class="wk-panel" id="wkPanel-sex" style="display:none;">
                 <div style="text-align:center;padding:40px;color:var(--gray-400);">Loading...</div>
             </div>
-        </div>
-    </div>
-
-    <!-- ==================== RECOVERY ==================== -->
-    <div class="section" id="section-recovery">
-        <div style="margin-bottom:16px;">
-            <button class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">&larr; Dashboard</button>
-        </div>
-        <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                <h2 style="margin-bottom:0;">&#128255; Recovery Notes</h2>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn btn-secondary btn-sm" onclick="addRecoveryTab()">+ Tab</button>
-                    <button class="btn btn-primary btn-sm" id="recoverySaveBtn" onclick="saveRecoveryNotes()">Save</button>
-                </div>
-            </div>
-            <div id="recoveryTabBar" style="display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;"></div>
-            <div id="recoveryContent"></div>
-            <div id="recoverySavedAt" style="font-size:11px;color:var(--gray-400);margin-top:8px;"></div>
         </div>
     </div>
 
@@ -4666,15 +4441,6 @@
 
 </div>
 
-<!-- Bottom navigation (mobile) — one item per rail group; tap opens a half-sheet -->
-<nav class="bottom-nav" id="bottomNav">
-    <button class="bottom-nav-item" data-group="today" onclick="openGroupSheet('today')"><span class="nav-icon">&#9711;</span>Today</button>
-    <button class="bottom-nav-item" data-group="craft" onclick="openGroupSheet('craft')"><span class="nav-icon">&#9998;</span>Craft</button>
-    <button class="bottom-nav-item" data-group="learn" onclick="openGroupSheet('learn')"><span class="nav-icon">&#10022;</span>Learn</button>
-    <button class="bottom-nav-item" data-group="operate" onclick="openGroupSheet('operate')"><span class="nav-icon">&#9881;</span>Operate</button>
-</nav>
-<div class="sheet-overlay" id="groupSheetOverlay" onclick="closeGroupSheet()"></div>
-<div class="group-sheet" id="groupSheet"></div>
 
 <!-- Command palette (⌘K / Ctrl+K) -->
 <div class="cmdk-overlay" id="cmdkOverlay">
@@ -4698,7 +4464,6 @@
 <script src="/guru/js/guru-header-timer.js"></script>
 <script src="/guru/js/guru-intention.js"></script>
 <script src="/guru/js/guru-tools.js"></script>
-<script src="/guru/js/guru-translation.js"></script>
 <script src="/guru/js/guru-website.js"></script>
 <script src="/guru/js/guru-comments.js"></script>
 <script>init();</script>

@@ -13,6 +13,14 @@ let finBizMonthFilter = '';
 let finExpGroupFilter = '';
 const expSelectedIds = new Set();
 
+// Legacy data: the old API defaulted frequency to 'monthly' on dated one-time
+// expenses, so an entry only counts as recurring when it has a recurringDate
+// (e.g. "2nd") or no concrete date.
+function isRecurringExp(e) {
+    return (e.frequency === 'monthly' || e.frequency === 'weekly' || e.frequency === 'yearly')
+        && (!!e.recurringDate || !e.date);
+}
+
 function switchFinMode(mode) {
     currentFinMode = mode;
     document.querySelectorAll('.fin-mode-btn').forEach(b => b.classList.remove('active'));
@@ -105,8 +113,8 @@ function renderFinances() {
 
     // Expenses — separate recurring from one-time
     const exp = financeEntries.filter(e => e.kind === 'expense');
-    const expRecurring = exp.filter(e => e.frequency === 'monthly' || e.frequency === 'weekly' || e.frequency === 'yearly');
-    const expOneTime = exp.filter(e => !e.frequency || e.frequency === 'one-time' || e.frequency === '');
+    const expRecurring = exp.filter(isRecurringExp);
+    const expOneTime = exp.filter(e => !isRecurringExp(e));
     // Weekly → monthly multiplier: 52 weeks / 12 months ≈ 4.3333
     const WEEKS_PER_MONTH = 52 / 12;
     const recMonthlyUSD = expRecurring.filter(e => e.frequency === 'monthly').reduce((s, e) => s + (parseFloat(e.price) || 0), 0);
@@ -617,7 +625,7 @@ function inlineEditExp(id) {
     const row = document.getElementById('fin-row-' + id);
     if (!row) return;
     const catOpts = EXP_CATS.map(c => `<option value="${c}" ${c === (entry.category||'other') ? 'selected' : ''}>${c}</option>`).join('');
-    const isRecurring = !!entry.frequency;
+    const isRecurring = isRecurringExp(entry);
     const freqOpts = ['monthly','weekly','yearly'].map(f => `<option value="${f}" ${f === entry.frequency ? 'selected' : ''}>${f}</option>`).join('');
     row.innerHTML = `
         <td><input type="number" step="0.01" value="${parseFloat(entry.price)||''}" id="ie-price-${id}" ${is}></td>
@@ -637,7 +645,7 @@ function inlineEditExp(id) {
 
 async function inlineSaveExp(id) {
     const entry = financeEntries.find(e => e.id === id);
-    const isRecurring = entry && !!entry.frequency;
+    const isRecurring = entry && isRecurringExp(entry);
     const payload = {
         id, kind: 'expense',
         price: document.getElementById('ie-price-' + id).value,

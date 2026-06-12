@@ -133,8 +133,6 @@ Pages Functions in `functions/`.
 | `ADMIN_EMAIL` | new-subscriber + comment notifications | already set |
 | `UNSUBSCRIBE_SECRET` | unsubscribe link HMAC | already set |
 | `RESEND_API_KEY` | newsletter, goldlist email, intention digest | set if newsletter is live |
-| `OPENAI_API_KEY` | translation tab (Whisper transcription) | optional |
-| `ANTHROPIC_API_KEY` | translation tab (translation step) | optional |
 | `TURNSTILE_SECRET_KEY` | blog comment spam protection | optional |
 | `GITLAB_TOKEN` | blog publish pipeline (bijan used GitLab; this repo is GitHub — the Website tab's publish flow stays dormant until adapted) | n/a |
 
