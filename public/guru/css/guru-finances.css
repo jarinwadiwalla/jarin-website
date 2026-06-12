@@ -1,0 +1,8 @@
+/* ==========================================================================
+   Guru Dashboard — Finances Section
+   Mode buttons
+   ========================================================================== */
+
+/* Mode buttons — finances */
+.fin-mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.fin-mode-btn:hover:not(.active) { background: var(--light); }

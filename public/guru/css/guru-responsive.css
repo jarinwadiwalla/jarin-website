@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Guru Dashboard — Mobile Responsive Overrides
+   Global responsive rules for max-width: 900px
+   (Section-specific responsive rules live in their own CSS files)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    /* ===== BASE ===== */
+    body { font-size: 14px; font-weight: 400; color: var(--gray-900); line-height: 1.5; }
+    .main { padding: 10px; padding-bottom: 72px; }
+    .header { padding: 12px 14px; }
+    .header h1 { font-size: 17px; }
+    .header-meta { font-size: 11px; }
+    .nav { display: none; }
+
+    /* Cards */
+    .card { padding: 14px; margin-bottom: 12px; border-radius: 12px; }
+    .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .card h3 { font-size: 14px; font-weight: 600; }
+    .card p, .card li, .card span, .card div { font-size: 13px; line-height: 1.5; }
+
+    /* Dashboard cards */
+    #section-dashboard > div:first-child > .card { padding: 18px 14px; }
+    #section-dashboard > div:first-child > .card div[style*="font-size:32px"] {
+        font-size: 28px !important; margin-bottom: 8px !important;
+    }
+    #section-dashboard > div:first-child > .card h2 { font-size: 15px; margin-bottom: 4px; }
+    #section-dashboard > div:first-child > .card p { font-size: 12px; }
+
+    /* Stat cards — compact horizontal layout */
+    .stat-card { padding: 12px 14px; border-radius: 10px; text-align: left; display: flex; align-items: center; gap: 8px; }
+    .stat-card .value { font-size: 22px; font-weight: 800; order: 2; margin-left: auto; }
+    .stat-card .label { font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--gray-700); order: 1; }
+    .stat-card .sub { display: none; }
+
+    /* Grids → single column */
+    [style*="grid-template-columns:1fr 1fr 1fr 1fr"],
+    [style*="grid-template-columns: 1fr 1fr 1fr 1fr"],
+    [style*="grid-template-columns:repeat(4"],
+    [style*="grid-template-columns:repeat(5"],
+    [style*="grid-template-columns:repeat(3"],
+    [style*="grid-template-columns:1fr 1fr;"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 8px; }
+
+    /* Form grids → single column */
+    [style*="grid-template-columns:100px"],
+    [style*="grid-template-columns:1fr 1fr 120px"],
+    [style*="grid-template-columns:100px 120px"],
+    [style*="grid-template-columns:100px 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 8px; }
+    .editor-layout { grid-template-columns: 1fr !important; }
+
+    /* Forms */
+    .form-group label { font-size: 12px; font-weight: 600; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select { font-size: 16px !important; padding: 10px; border-radius: 8px; }
+    .form-group textarea { min-height: 120px; font-size: 14px !important; }
+
+    /* Buttons */
+    .btn { min-height: 40px; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 8px; }
+    .btn-sm { min-height: 34px; font-size: 12px; padding: 7px 12px; }
+    .btn-group { gap: 6px; flex-wrap: wrap; }
+    input[type="checkbox"] { width: 22px !important; height: 22px !important; }
+
+    /* Tables */
+    table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    thead, tbody, tr { display: table; width: 100%; table-layout: auto; }
+    th { font-size: 11px !important; padding: 8px 6px !important; font-weight: 700; }
+    td { font-size: 12px !important; padding: 8px 6px !important; }
+
+    /* To-do / task items */
+    .todo-item, .task-item { padding: 10px 8px; font-size: 13px; font-weight: 500; }
+
+    /* Habit items */
+    .habit-item { padding: 10px 8px; }
+    .habit-name { font-size: 13px !important; font-weight: 600 !important; }
+
+    /* Focus banner */
+    #focusBanner { padding: 10px 14px; font-size: 13px; font-weight: 700; }
+
+    /* Sobriety badges */
+    .ms-badge { padding: 14px 10px; border-radius: 10px; }
+    .ms-badge .ms-days { font-size: 30px; }
+    .ms-badge .ms-label { font-size: 11px; }
+    .ms-badge .ms-name { font-size: 13px; }
+    .ms-badge .ms-detail { font-size: 10px; }
+    .ms-badge .ms-resets { font-size: 10px; }
+
+    /* Timers */
+    #medTimerDisplay, #pomTimerDisplay { font-size: 48px !important; }
+
+    /* Audio player */
+    #audioNowPlaying { padding: 14px; border-radius: 10px; }
+    #audioTrackTitle { font-size: 15px !important; font-weight: 700 !important; }
+
+    /* Hint boxes */
+    .hint-box { font-size: 12px; padding: 12px; border-radius: 8px; }
+    .hint-title { font-size: 13px; font-weight: 700; }
+
+    /* Notes */
+    #notesContent-training, #notesContent-general {
+        font-size: 13px !important; line-height: 1.6; padding: 12px; border-radius: 8px;
+    }
+
+    /* Preview pane */
+    .preview-pane { font-size: 13px; padding: 14px; }
+    .preview-pane p { font-size: 13px !important; }
+    .preview-pane h1 { font-size: 18px !important; }
+    .preview-pane h2 { font-size: 16px !important; }
+
+    /* Sub-tab buttons */
+    .media-mode-btn, .notes-tab-btn, .habit-view-btn {
+        font-size: 12px !important;
+        padding: 7px 12px !important;
+        min-height: 34px;
+    }
+
+    /* Empty states */
+    .empty-state { padding: 24px 12px; }
+    .empty-state p { font-size: 13px; }
+    .empty-icon { font-size: 36px; }
+
+    /* Bottom nav bar */
+    .bottom-nav {
+        display: flex !important;
+    }
+}

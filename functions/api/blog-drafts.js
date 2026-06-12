@@ -9,10 +9,7 @@
  *   - SITE_DB (D1 database)
  */
 
-const CORS_HEADERS = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-};
+import { jsonResponse, errorResponse } from '../lib/response.js';
 
 export async function onRequestGet(context) {
   try {
@@ -25,15 +22,9 @@ export async function onRequestGet(context) {
       scheduledAt: row.scheduledAt || null,
     }));
 
-    return new Response(
-      JSON.stringify({ drafts }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ drafts });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to load drafts." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to load drafts.");
   }
 }
 
@@ -43,10 +34,7 @@ export async function onRequestPost(context) {
     const { draft } = body;
 
     if (!draft || !draft.slug || !draft.title || !draft.body) {
-      return new Response(
-        JSON.stringify({ error: "Draft must include slug, title, and body." }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return errorResponse("Draft must include slug, title, and body.", 400);
     }
 
     const data = {
@@ -68,15 +56,9 @@ export async function onRequestPost(context) {
       data.image, data.body, data.scheduledAt, data.updatedAt
     ).run();
 
-    return new Response(
-      JSON.stringify({ ok: true, draft: data }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ ok: true, draft: data });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to save draft." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to save draft.");
   }
 }
 
@@ -86,35 +68,15 @@ export async function onRequestDelete(context) {
     const { slug } = body;
 
     if (!slug) {
-      return new Response(
-        JSON.stringify({ error: "Must include slug." }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return errorResponse("Must include slug.", 400);
     }
 
     await context.env.SITE_DB.prepare(
       "DELETE FROM blog_drafts WHERE slug = ?"
     ).bind(slug).run();
 
-    return new Response(
-      JSON.stringify({ ok: true }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ ok: true });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to delete draft." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to delete draft.");
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
 }

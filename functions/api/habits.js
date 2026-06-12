@@ -9,10 +9,7 @@
  *   - SITE_DB (D1 database)
  */
 
-const CORS_HEADERS = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-};
+import { jsonResponse, errorResponse } from '../lib/response.js';
 
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
@@ -30,19 +27,22 @@ function ninetyDaysAgo() {
   return d.toISOString().slice(0, 10);
 }
 
+/** Monday of the current ISO week (UTC) */
 function currentWeekStart() {
   const d = new Date();
-  const day = d.getUTCDay();
-  const diff = day === 0 ? 6 : day - 1;
+  const day = d.getUTCDay(); // 0=Sun
+  const diff = day === 0 ? 6 : day - 1; // days since Monday
   d.setUTCDate(d.getUTCDate() - diff);
   return d.toISOString().slice(0, 10);
 }
 
+/** 1st of the current month (UTC) */
 function currentMonthStart() {
   const d = new Date();
   return d.toISOString().slice(0, 8) + "01";
 }
 
+/** Monday of the ISO week containing dateStr */
 function getWeekStart(dateStr) {
   const d = new Date(dateStr + "T12:00:00Z");
   const day = d.getUTCDay();
@@ -51,23 +51,44 @@ function getWeekStart(dateStr) {
   return d.toISOString().slice(0, 10);
 }
 
+/** 1st of the month containing dateStr */
 function getMonthStart(dateStr) {
   return dateStr.slice(0, 8) + "01";
 }
 
+/** 1st of the month before monthStr (which must be YYYY-MM-DD of a 1st) */
 function prevMonthStart(monthStr) {
   const d = new Date(monthStr + "T12:00:00Z");
   d.setUTCMonth(d.getUTCMonth() - 1);
   return d.toISOString().slice(0, 10);
 }
 
+/** Previous Monday relative to a week-start */
 function prevWeekStart(weekStr) {
   const d = new Date(weekStr + "T12:00:00Z");
   d.setUTCDate(d.getUTCDate() - 7);
   return d.toISOString().slice(0, 10);
 }
 
-async function recalcStreak(db, habitId, frequency) {
+/**
+ * Recalculate streak by walking backwards through logs.
+ * frequency: 'daily' | 'weekly' | 'monthly'
+ * Returns { currentStreak, longestStreak }.
+ */
+/** Day-of-week index: sun=0 ... sat=6 */
+const DAY_MAP = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+
+function parseScheduleDays(str) {
+  if (!str) return null;
+  const nums = str.split(',').map(s => DAY_MAP[s.trim()]).filter(n => n !== undefined);
+  return nums.length > 0 ? new Set(nums) : null;
+}
+
+function isScheduledDay(dateStr, schedSet) {
+  return schedSet.has(new Date(dateStr + "T12:00:00").getUTCDay());
+}
+
+async function recalcStreak(db, habitId, frequency, scheduleDays) {
   const { results: logs } = await db.prepare(
     "SELECT date FROM habit_logs WHERE habitId = ? ORDER BY date DESC"
   ).bind(habitId).all();
@@ -130,7 +151,51 @@ async function recalcStreak(db, habitId, frequency) {
     return { currentStreak, longestStreak };
   }
 
-  // Daily
+  // Daily — schedule-aware
+  const schedSet = parseScheduleDays(scheduleDays);
+
+  if (schedSet) {
+    // Walk backwards through scheduled days, check if each has a log
+    const dateSet = new Set(dates);
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let streak = 0;
+
+    // Generate scheduled days for last 365 days, newest first
+    const scheduled = [];
+    for (let i = 0; i < 365; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      if (schedSet.has(d.getDay())) {
+        scheduled.push(d.toISOString().slice(0, 10));
+      }
+    }
+
+    // Current streak (allow today to be incomplete)
+    for (let i = 0; i < scheduled.length; i++) {
+      if (dateSet.has(scheduled[i])) {
+        currentStreak++;
+      } else if (i === 0 && scheduled[i] === todayDate()) {
+        continue; // today not done yet, don't break
+      } else {
+        break;
+      }
+    }
+
+    // Longest streak
+    for (const ds of scheduled.slice().reverse()) {
+      if (dateSet.has(ds)) {
+        streak++;
+        if (streak > longestStreak) longestStreak = streak;
+      } else {
+        streak = 0;
+      }
+    }
+
+    return { currentStreak, longestStreak };
+  }
+
+  // Daily without schedule — original logic
   const today = todayDate();
   const yesterday = yesterdayDate();
 
@@ -168,6 +233,7 @@ async function recalcStreak(db, habitId, frequency) {
 
 export async function onRequestGet(context) {
   try {
+    // Accept client's local date to avoid UTC vs local timezone mismatch
     const url = new URL(context.request.url);
     const today = url.searchParams.get("today") || todayDate();
     const ninetyAgo = ninetyDaysAgo();
@@ -192,21 +258,15 @@ export async function onRequestGet(context) {
       ).bind(monthStart).all(),
     ]);
 
-    return new Response(
-      JSON.stringify({
-        habits: habitsResult.results,
-        todayLogs: todayLogsResult.results,
-        recentLogs: recentLogsResult.results,
-        weekLogs: weekLogsResult.results,
-        monthLogs: monthLogsResult.results,
-      }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({
+      habits: habitsResult.results,
+      todayLogs: todayLogsResult.results,
+      recentLogs: recentLogsResult.results,
+      weekLogs: weekLogsResult.results,
+      monthLogs: monthLogsResult.results,
+    });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to load habits." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to load habits.", 500);
   }
 }
 
@@ -215,15 +275,14 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const action = body.action || "save";
     const now = new Date().toISOString();
+    // Use client's local date if provided to avoid UTC timezone mismatch
     const today = body.today || todayDate();
 
+    // ── Complete a habit for today ──
     if (action === "complete") {
       const { id } = body;
       if (!id) {
-        return new Response(
-          JSON.stringify({ error: "id is required." }),
-          { status: 400, headers: CORS_HEADERS }
-        );
+        return errorResponse("id is required.", 400);
       }
 
       const habit = await context.env.SITE_DB.prepare(
@@ -231,53 +290,48 @@ export async function onRequestPost(context) {
       ).bind(id).first();
 
       if (!habit) {
-        return new Response(
-          JSON.stringify({ error: "Habit not found." }),
-          { status: 404, headers: CORS_HEADERS }
-        );
+        return errorResponse("Habit not found.", 404);
       }
 
       const freq = habit.frequency || "daily";
+      // When scheduleDays is set, completion is per-day regardless of frequency
+      const effectiveFreq = habit.scheduleDays ? "daily" : freq;
 
-      if (freq === "weekly") {
+      // Period-duplicate guard for weekly/monthly habits
+      if (effectiveFreq === "weekly") {
         const existing = await context.env.SITE_DB.prepare(
           "SELECT id FROM habit_logs WHERE habitId = ? AND date >= ?"
         ).bind(id, currentWeekStart()).first();
         if (existing) {
-          return new Response(
-            JSON.stringify({ error: "Already completed this week." }),
-            { status: 409, headers: CORS_HEADERS }
-          );
+          return errorResponse("Already completed this week.", 409);
         }
-      } else if (freq === "monthly") {
+      } else if (effectiveFreq === "monthly") {
         const existing = await context.env.SITE_DB.prepare(
           "SELECT id FROM habit_logs WHERE habitId = ? AND date >= ?"
         ).bind(id, currentMonthStart()).first();
         if (existing) {
-          return new Response(
-            JSON.stringify({ error: "Already completed this month." }),
-            { status: 409, headers: CORS_HEADERS }
-          );
+          return errorResponse("Already completed this month.", 409);
         }
       }
 
+      // Insert log (ignore if already exists for today)
       const logId = String(Date.now()) + "-" + Math.random().toString(36).slice(2, 6);
       const logNotes = (body.notes || "").trim();
-      const logValue = body.value !== undefined ? Number(body.value) : 0;
-
-      const hasValueCol = habit.valueType && habit.valueType !== "";
-      if (hasValueCol) {
+      const logValue = parseFloat(body.value) || 0;
+      await context.env.SITE_DB.prepare(
+        "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, value, createdAt) VALUES (?, ?, ?, ?, ?, ?)"
+      ).bind(logId, id, today, logNotes, logValue, now).run();
+      // Update value if log already existed
+      if (logValue > 0) {
         await context.env.SITE_DB.prepare(
-          "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, value, createdAt) VALUES (?, ?, ?, ?, ?, ?)"
-        ).bind(logId, id, today, logNotes, logValue, now).run();
-      } else {
-        await context.env.SITE_DB.prepare(
-          "INSERT OR IGNORE INTO habit_logs (id, habitId, date, notes, createdAt) VALUES (?, ?, ?, ?, ?)"
-        ).bind(logId, id, today, logNotes, now).run();
+          "UPDATE habit_logs SET value = ? WHERE habitId = ? AND date = ?"
+        ).bind(logValue, id, today).run();
       }
 
-      const { currentStreak, longestStreak } = await recalcStreak(context.env.SITE_DB, id, freq);
+      // Recalculate streak from logs (use effective frequency to honor scheduleDays)
+      const { currentStreak, longestStreak } = await recalcStreak(context.env.SITE_DB, id, effectiveFreq, habit.scheduleDays);
 
+      // Count total completions
       const countRow = await context.env.SITE_DB.prepare(
         "SELECT COUNT(*) as c FROM habit_logs WHERE habitId = ?"
       ).bind(id).first();
@@ -286,50 +340,43 @@ export async function onRequestPost(context) {
         "UPDATE habits SET currentStreak=?, longestStreak=?, totalCompletions=?, lastCompletedDate=?, updatedAt=? WHERE id=?"
       ).bind(currentStreak, longestStreak, countRow.c, today, now, id).run();
 
-      return new Response(
-        JSON.stringify({ ok: true, currentStreak, longestStreak, totalCompletions: countRow.c }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ ok: true, currentStreak, longestStreak, totalCompletions: countRow.c });
     }
 
+    // ── Update note on a habit log ──
     if (action === "update-note") {
       const { id, date, notes } = body;
       if (!id) {
-        return new Response(
-          JSON.stringify({ error: "id is required." }),
-          { status: 400, headers: CORS_HEADERS }
-        );
+        return errorResponse("id is required.", 400);
       }
       const logDate = date || today;
       await context.env.SITE_DB.prepare(
         "UPDATE habit_logs SET notes = ? WHERE habitId = ? AND date = ?"
       ).bind((notes || "").trim(), id, logDate).run();
 
-      return new Response(
-        JSON.stringify({ ok: true }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ ok: true });
     }
 
+    // ── Uncomplete a habit for today ──
     if (action === "uncomplete") {
       const { id } = body;
       if (!id) {
-        return new Response(
-          JSON.stringify({ error: "id is required." }),
-          { status: 400, headers: CORS_HEADERS }
-        );
+        return errorResponse("id is required.", 400);
       }
 
       const habit = await context.env.SITE_DB.prepare(
         "SELECT * FROM habits WHERE id = ?"
       ).bind(id).first();
       const freq = habit?.frequency || "daily";
+      // When scheduleDays is set, uncompletion is per-day regardless of frequency
+      const effectiveFreq = habit?.scheduleDays ? "daily" : freq;
 
-      if (freq === "weekly") {
+      // Delete logs for the current period
+      if (effectiveFreq === "weekly") {
         await context.env.SITE_DB.prepare(
           "DELETE FROM habit_logs WHERE habitId = ? AND date >= ?"
         ).bind(id, currentWeekStart()).run();
-      } else if (freq === "monthly") {
+      } else if (effectiveFreq === "monthly") {
         await context.env.SITE_DB.prepare(
           "DELETE FROM habit_logs WHERE habitId = ? AND date >= ?"
         ).bind(id, currentMonthStart()).run();
@@ -339,7 +386,7 @@ export async function onRequestPost(context) {
         ).bind(id, today).run();
       }
 
-      const { currentStreak, longestStreak } = await recalcStreak(context.env.SITE_DB, id, freq);
+      const { currentStreak, longestStreak } = await recalcStreak(context.env.SITE_DB, id, effectiveFreq, habit?.scheduleDays);
 
       const countRow = await context.env.SITE_DB.prepare(
         "SELECT COUNT(*) as c FROM habit_logs WHERE habitId = ?"
@@ -353,20 +400,14 @@ export async function onRequestPost(context) {
         "UPDATE habits SET currentStreak=?, longestStreak=?, totalCompletions=?, lastCompletedDate=?, updatedAt=? WHERE id=?"
       ).bind(currentStreak, longestStreak, countRow.c, lastLog?.date || "", now, id).run();
 
-      return new Response(
-        JSON.stringify({ ok: true, currentStreak, longestStreak, totalCompletions: countRow.c }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ ok: true, currentStreak, longestStreak, totalCompletions: countRow.c });
     }
 
+    // ── Save (create or update) a habit definition ──
     if (action === "save") {
-      const { id, name, category, frequency, stackGroup, stackOrder, status,
-              scheduleDays, valueType, valueLabel, ventureId, goalId } = body;
+      const { id, name, category, frequency, stackGroup, stackOrder, status, valueType, valueLabel, scheduleDays, ventureId, goalId } = body;
       if (!name || !name.trim()) {
-        return new Response(
-          JSON.stringify({ error: "Habit name is required." }),
-          { status: 400, headers: CORS_HEADERS }
-        );
+        return errorResponse("Habit name is required.", 400);
       }
 
       const habitId = id || String(Date.now()) + "-" + Math.random().toString(36).slice(2, 6);
@@ -377,8 +418,7 @@ export async function onRequestPost(context) {
 
       if (existing) {
         await context.env.SITE_DB.prepare(
-          `UPDATE habits SET name=?, category=?, frequency=?, stackGroup=?, stackOrder=?, status=?,
-           scheduleDays=?, valueType=?, valueLabel=?, ventureId=?, goalId=?, updatedAt=? WHERE id=?`
+          "UPDATE habits SET name=?, category=?, frequency=?, stackGroup=?, stackOrder=?, status=?, valueType=?, valueLabel=?, scheduleDays=?, ventureId=?, goalId=?, updatedAt=? WHERE id=?"
         ).bind(
           name.trim(),
           category || existing.category,
@@ -386,15 +426,16 @@ export async function onRequestPost(context) {
           stackGroup !== undefined ? stackGroup : existing.stackGroup,
           stackOrder !== undefined ? stackOrder : existing.stackOrder,
           status || existing.status,
-          scheduleDays !== undefined ? scheduleDays : existing.scheduleDays,
-          valueType !== undefined ? valueType : existing.valueType,
-          valueLabel !== undefined ? valueLabel : existing.valueLabel,
-          ventureId !== undefined ? ventureId : existing.ventureId,
-          goalId !== undefined ? goalId : existing.goalId,
+          valueType !== undefined ? valueType : (existing.valueType || ''),
+          valueLabel !== undefined ? valueLabel : (existing.valueLabel || ''),
+          scheduleDays !== undefined ? scheduleDays : (existing.scheduleDays || ''),
+          ventureId !== undefined ? (ventureId || '') : (existing.ventureId || ''),
+          goalId !== undefined ? (goalId || '') : (existing.goalId || ''),
           now,
           habitId
         ).run();
       } else {
+        // For new habits, auto-assign stackOrder to end of group
         let order = stackOrder;
         if (order === undefined || order === null) {
           const maxRow = await context.env.SITE_DB.prepare(
@@ -404,9 +445,7 @@ export async function onRequestPost(context) {
         }
 
         await context.env.SITE_DB.prepare(
-          `INSERT INTO habits (id, name, category, frequency, stackGroup, stackOrder,
-           currentStreak, longestStreak, totalCompletions, lastCompletedDate, status,
-           scheduleDays, valueType, valueLabel, ventureId, goalId, createdAt, updatedAt)
+          `INSERT INTO habits (id, name, category, frequency, stackGroup, stackOrder, currentStreak, longestStreak, totalCompletions, lastCompletedDate, status, valueType, valueLabel, scheduleDays, ventureId, goalId, createdAt, updatedAt)
            VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0, '', 'active', ?, ?, ?, ?, ?, ?, ?)`
         ).bind(
           habitId,
@@ -415,28 +454,23 @@ export async function onRequestPost(context) {
           frequency || "daily",
           stackGroup || "",
           order,
-          scheduleDays || "",
           valueType || "",
           valueLabel || "",
+          scheduleDays || "",
           ventureId || "",
           goalId || "",
           now, now
         ).run();
       }
 
-      return new Response(
-        JSON.stringify({ ok: true, id: habitId }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ ok: true, id: habitId });
     }
 
+    // ── Reorder habits ──
     if (action === "reorder") {
       const { entries } = body;
       if (!Array.isArray(entries)) {
-        return new Response(
-          JSON.stringify({ error: "entries array is required." }),
-          { status: 400, headers: CORS_HEADERS }
-        );
+        return errorResponse("entries array is required.", 400);
       }
 
       const stmts = entries.map(e =>
@@ -449,21 +483,12 @@ export async function onRequestPost(context) {
         await context.env.SITE_DB.batch(stmts);
       }
 
-      return new Response(
-        JSON.stringify({ ok: true }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ ok: true });
     }
 
-    return new Response(
-      JSON.stringify({ error: "Unknown action: " + action }),
-      { status: 400, headers: CORS_HEADERS }
-    );
+    return errorResponse("Unknown action: " + action, 400);
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to process habit action." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to process habit action.", 500);
   }
 }
 
@@ -473,10 +498,7 @@ export async function onRequestDelete(context) {
     const { id } = body;
 
     if (!id) {
-      return new Response(
-        JSON.stringify({ error: "id is required." }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return errorResponse("id is required.", 400);
     }
 
     await context.env.SITE_DB.batch([
@@ -484,25 +506,8 @@ export async function onRequestDelete(context) {
       context.env.SITE_DB.prepare("DELETE FROM habits WHERE id = ?").bind(id),
     ]);
 
-    return new Response(
-      JSON.stringify({ ok: true }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ ok: true });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to delete habit." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to delete habit.", 500);
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
 }

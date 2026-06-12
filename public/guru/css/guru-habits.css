@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Guru Dashboard — Habits Section
+   Stack groups, habit items, heatmap, inline forms
+   ========================================================================== */
+
+.habit-stack-group { margin-bottom:20px; }
+.stack-header { font-size:13px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.5px; padding:8px 0 6px; border-bottom:1px solid var(--gray-200); margin-bottom:2px; display:flex; align-items:center; gap:8px; }
+.stack-header-label { cursor:pointer; }
+.stack-header-label:hover { color:var(--primary); }
+.stack-header-actions { margin-left:auto; display:flex; gap:4px; }
+.stack-header-actions button { padding:1px 6px; font-size:10px; cursor:pointer; background:none; border:1px solid transparent; border-radius:4px; color:var(--gray-400); }
+.stack-header-actions button:hover { color:var(--gray-700); border-color:var(--gray-200); }
+.habit-move-btns { display:flex; flex-direction:column; gap:0; margin-left:auto; }
+.habit-move-btns button { padding:0 4px; font-size:10px; line-height:1.2; cursor:pointer; background:none; border:none; color:var(--gray-400); }
+.habit-move-btns button:hover { color:var(--primary); }
+.habit-inline-form { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:14px; margin:4px 0 8px; }
+.habit-item { display:flex; align-items:center; gap:12px; padding:12px 8px; border-bottom:1px solid var(--gray-100); transition:background 0.15s; }
+.habit-item:hover { background:var(--gray-50); }
+.habit-item.completed { opacity:0.55; }
+.habit-item.completed .habit-name { text-decoration:line-through; }
+.habit-item input[type="checkbox"] { width:20px; height:20px; cursor:pointer; accent-color:var(--primary); flex-shrink:0; }
+.habit-name { font-size:15px; font-weight:500; color:var(--gray-800); flex:1; }
+.habit-streak { font-size:13px; color:#ea580c; font-weight:600; white-space:nowrap; }
+.habit-total { font-size:12px; color:var(--gray-400); white-space:nowrap; }
+.habit-freq-badge { font-size:10px; font-weight:700; background:var(--primary); color:white; border-radius:3px; padding:1px 5px; margin-left:4px; vertical-align:middle; }
+.habit-note-toggle { background:none; border:none; cursor:pointer; font-size:14px; padding:2px 4px; opacity:0.4; transition:opacity 0.15s; flex-shrink:0; }
+.habit-note-toggle:hover, .habit-note-toggle.has-note { opacity:1; }
+.habit-note-row { padding:2px 8px 8px 44px; }
+.habit-note-display { font-size:13px; color:var(--gray-500); font-style:italic; cursor:pointer; padding:2px 0; }
+.habit-note-display:hover { color:var(--gray-700); }
+.habit-note-input { width:100%; font-size:13px; padding:5px 8px; border:1px solid var(--gray-200); border-radius:6px; background:var(--gray-50); resize:none; font-family:inherit; }
+.habit-note-input:focus { outline:none; border-color:var(--primary); }
+
+/* Heatmap */
+.heatmap-label { font-size:10px; color:var(--gray-400); line-height:16px; }
+.heatmap-cell { width:14px; height:14px; border-radius:3px; background:var(--gray-100); }
+.heatmap-cell.level-1 { background:#d1fae5; }
+.heatmap-cell.level-2 { background:#6ee7b7; }
+.heatmap-cell.level-3 { background:#34d399; }
+.heatmap-cell.level-4 { background:#059669; }

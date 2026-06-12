@@ -1,106 +1,98 @@
 /**
  * Cloudflare Pages Function — /api/todos
  *
- * GET    → list all todos (sorted by priority desc, then createdAt desc)
- * POST   → create or update a todo
- * DELETE → delete a todo
+ * GET    → list all todos
+ * POST   → create/update a todo
+ * DELETE → delete a todo by id
+ *
+ * Environment bindings required:
+ *   - SITE_DB (D1 database)
  */
 
-const CORS = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-};
-
-function newId() {
-  return String(Date.now()) + "-" + Math.random().toString(36).slice(2, 7);
-}
+import { jsonResponse, errorResponse } from '../lib/response.js';
 
 export async function onRequestGet(context) {
   try {
     const { results } = await context.env.SITE_DB.prepare(
-      "SELECT * FROM todos ORDER BY completed ASC, priority DESC, createdAt DESC"
+      "SELECT * FROM todos ORDER BY createdAt DESC"
     ).all();
-    return new Response(JSON.stringify({ todos: results }), { status: 200, headers: CORS });
+
+    const todos = results.map(row => ({
+      ...row,
+      completed: !!row.completed,
+    }));
+
+    return jsonResponse({ todos });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Failed to load todos." }), { status: 500, headers: CORS });
+    return errorResponse("Failed to load todos.");
   }
 }
 
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
-    const now = new Date().toISOString();
     const { id, text, completed, ventureId, goalId, priority, dueDate } = body;
 
     if (!text || !text.trim()) {
-      return new Response(JSON.stringify({ error: "text is required." }), { status: 400, headers: CORS });
+      return errorResponse("Text is required.", 400);
     }
 
-    if (id) {
-      const existing = await context.env.SITE_DB.prepare(
-        "SELECT * FROM todos WHERE id = ?"
-      ).bind(id).first();
+    const todoId = id || String(Date.now());
+    const now = new Date().toISOString();
 
-      if (!existing) {
-        return new Response(JSON.stringify({ error: "Todo not found." }), { status: 404, headers: CORS });
-      }
+    const existing = await context.env.SITE_DB.prepare(
+      "SELECT * FROM todos WHERE id = ?"
+    ).bind(todoId).first();
 
+    // Honor partial updates: if a linkage field is omitted, keep the existing value.
+    const nextVentureId = ventureId !== undefined ? (ventureId || '') : (existing ? (existing.ventureId || '') : '');
+    const nextGoalId    = goalId    !== undefined ? (goalId    || '') : (existing ? (existing.goalId    || '') : '');
+    const nextPriority  = priority  !== undefined ? (parseInt(priority) || 0) : (existing ? (existing.priority || 0) : 0);
+    const nextDueDate   = dueDate   !== undefined ? (dueDate   || '') : (existing ? (existing.dueDate   || '') : '');
+
+    if (existing) {
       await context.env.SITE_DB.prepare(
-        `UPDATE todos SET text=?, completed=?, ventureId=?, goalId=?, priority=?, dueDate=?, updatedAt=? WHERE id=?`
-      ).bind(
-        text.trim(),
-        completed !== undefined ? (completed ? 1 : 0) : existing.completed,
-        ventureId !== undefined ? ventureId : existing.ventureId,
-        goalId !== undefined ? goalId : existing.goalId,
-        priority !== undefined ? priority : existing.priority,
-        dueDate !== undefined ? dueDate : existing.dueDate,
-        now,
-        id
-      ).run();
-
-      const updated = await context.env.SITE_DB.prepare("SELECT * FROM todos WHERE id = ?").bind(id).first();
-      return new Response(JSON.stringify({ ok: true, todo: updated }), { status: 200, headers: CORS });
+        "UPDATE todos SET text=?, completed=?, ventureId=?, goalId=?, priority=?, dueDate=?, updatedAt=? WHERE id=?"
+      ).bind(text.trim(), completed ? 1 : 0, nextVentureId, nextGoalId, nextPriority, nextDueDate, now, todoId).run();
+    } else {
+      await context.env.SITE_DB.prepare(
+        "INSERT INTO todos (id, text, completed, ventureId, goalId, priority, dueDate, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      ).bind(todoId, text.trim(), completed ? 1 : 0, nextVentureId, nextGoalId, nextPriority, nextDueDate, now, now).run();
     }
 
-    const todoId = newId();
-    await context.env.SITE_DB.prepare(
-      `INSERT INTO todos (id, text, completed, ventureId, goalId, priority, dueDate, createdAt, updatedAt)
-       VALUES (?, ?, 0, ?, ?, ?, ?, ?, ?)`
-    ).bind(
-      todoId,
-      text.trim(),
-      ventureId || "",
-      goalId || "",
-      priority || 0,
-      dueDate || "",
-      now, now
-    ).run();
+    const data = {
+      id: todoId,
+      text: text.trim(),
+      completed: !!completed,
+      ventureId: nextVentureId,
+      goalId: nextGoalId,
+      priority: nextPriority,
+      dueDate: nextDueDate,
+      createdAt: existing ? existing.createdAt : now,
+      updatedAt: now,
+    };
 
-    const todo = await context.env.SITE_DB.prepare("SELECT * FROM todos WHERE id = ?").bind(todoId).first();
-    return new Response(JSON.stringify({ ok: true, todo }), { status: 200, headers: CORS });
+    return jsonResponse({ ok: true, todo: data });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Failed to save todo." }), { status: 500, headers: CORS });
+    return errorResponse("Failed to save todo.");
   }
 }
 
 export async function onRequestDelete(context) {
   try {
-    const { id } = await context.request.json();
-    if (!id) return new Response(JSON.stringify({ error: "id is required." }), { status: 400, headers: CORS });
-    await context.env.SITE_DB.prepare("DELETE FROM todos WHERE id = ?").bind(id).run();
-    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: CORS });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Failed to delete todo." }), { status: 500, headers: CORS });
-  }
-}
+    const body = await context.request.json();
+    const { id } = body;
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+    if (!id) {
+      return errorResponse("Must include id.", 400);
+    }
+
+    await context.env.SITE_DB.prepare(
+      "DELETE FROM todos WHERE id = ?"
+    ).bind(id).run();
+
+    return jsonResponse({ ok: true });
+  } catch (err) {
+    return errorResponse("Failed to delete todo.");
+  }
 }

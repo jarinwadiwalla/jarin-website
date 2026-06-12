@@ -2,20 +2,17 @@
  * Cloudflare Pages Function — /api/blog-publish
  *
  * POST → reads draft from D1, builds .md with front matter,
- *        commits to GitHub via Contents API, deletes draft from D1
+ *        commits to GitLab via Repository Files API, deletes draft from D1
  *
  * Environment bindings required:
  *   - SITE_DB (D1 database)
- *   - GITHUB_TOKEN (secret)
+ *   - GITLAB_TOKEN (secret)
  */
 
-const CORS_HEADERS = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-};
+import { jsonResponse, errorResponse } from '../lib/response.js';
 
-const GITHUB_REPO = "jarinwadiwalla/jarin-website";
-const GITHUB_API = "https://api.github.com";
+const GITLAB_PROJECT = "jarinwadiwalla%2Fjarin-website";
+const GITLAB_API = "https://gitlab.com/api/v4";
 const BRANCH = "main";
 
 function buildMarkdown(draft) {
@@ -39,20 +36,16 @@ export async function onRequestPost(context) {
     const { slug } = body;
 
     if (!slug) {
-      return new Response(
-        JSON.stringify({ error: "Must include slug." }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return errorResponse("Must include slug.", 400);
     }
 
-    const token = context.env.GITHUB_TOKEN;
+    const token = context.env.GITLAB_TOKEN;
     if (!token) {
-      return new Response(
-        JSON.stringify({ error: "GITHUB_TOKEN not configured." }),
-        { status: 500, headers: CORS_HEADERS }
-      );
+      return errorResponse("GITLAB_TOKEN not configured.");
     }
 
+    // Use inline draft data if provided (allows publishing without saving first),
+    // otherwise fall back to reading from D1
     let draft;
     if (body.title && body.body) {
       draft = {
@@ -70,97 +63,57 @@ export async function onRequestPost(context) {
       ).bind(slug).first();
 
       if (!draft) {
-        return new Response(
-          JSON.stringify({ error: "Draft not found." }),
-          { status: 404, headers: CORS_HEADERS }
-        );
+        return errorResponse("Draft not found.", 404);
       }
     }
 
     const markdown = buildMarkdown(draft);
     const filePath = `blog/posts/${slug}.md`;
-    const encodedContent = btoa(unescape(encodeURIComponent(markdown)));
+    const encodedPath = encodeURIComponent(filePath);
 
-    // Check if file already exists (need SHA for update)
-    let existingSha = null;
-    const checkRes = await fetch(
-      `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}?ref=${BRANCH}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github.v3+json",
-          "User-Agent": "jarin-website",
-        },
-      }
+    const headRes = await fetch(
+      `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/files/${encodedPath}?ref=${BRANCH}`,
+      { method: "HEAD", headers: { "PRIVATE-TOKEN": token } }
     );
 
-    if (checkRes.ok) {
-      const existing = await checkRes.json();
-      existingSha = existing.sha;
-    }
-
-    const commitMessage = existingSha
+    const fileExists = headRes.ok;
+    const method = fileExists ? "PUT" : "POST";
+    const commitMessage = fileExists
       ? `Update blog post: ${draft.title}`
       : `Add blog post: ${draft.title}`;
 
-    const commitBody = {
-      message: commitMessage,
-      content: encodedContent,
-      branch: BRANCH,
-    };
-    if (existingSha) {
-      commitBody.sha = existingSha;
-    }
-
     const commitRes = await fetch(
-      `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}`,
+      `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/files/${encodedPath}`,
       {
-        method: "PUT",
+        method,
         headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github.v3+json",
+          "PRIVATE-TOKEN": token,
           "Content-Type": "application/json",
-          "User-Agent": "jarin-website",
         },
-        body: JSON.stringify(commitBody),
+        body: JSON.stringify({
+          branch: BRANCH,
+          content: markdown,
+          commit_message: commitMessage,
+          encoding: "text",
+        }),
       }
     );
 
     if (!commitRes.ok) {
       const errBody = await commitRes.text();
-      return new Response(
-        JSON.stringify({ error: "GitHub commit failed.", details: errBody }),
-        { status: 502, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ error: "GitLab commit failed.", details: errBody }, 502);
     }
 
     await context.env.SITE_DB.prepare(
       "DELETE FROM blog_drafts WHERE slug = ?"
     ).bind(slug).run();
 
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        message: commitMessage,
-        file: filePath,
-      }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({
+      ok: true,
+      message: commitMessage,
+      file: filePath,
+    });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to publish blog post." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to publish blog post.");
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
 }

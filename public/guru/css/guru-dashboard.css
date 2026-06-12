@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Guru Dashboard — Dashboard Section
+   Todo items, sobriety milestones
+   ========================================================================== */
+
+/* Todo items */
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.todo-item .todo-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.todo-item .todo-text.completed {
+    text-decoration: line-through;
+    color: var(--gray-400);
+}
+.todo-item .todo-text.editing {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 6px 10px;
+    outline: none;
+}
+.todo-item .todo-date {
+    font-size: 11px;
+    color: var(--gray-400);
+    white-space: nowrap;
+}
+.todo-item .todo-actions {
+    display: flex;
+    gap: 4px;
+}
+.todo-item .todo-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: var(--gray-400);
+}
+.todo-item .todo-actions button:hover { background: var(--gray-100); color: var(--gray-700); }
+
+/* Sobriety milestone color picker */
+.ms-color-btn {
+    width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent;
+    cursor: pointer; transition: border-color 0.2s, transform 0.15s;
+}
+.ms-color-btn:hover { transform: scale(1.15); }
+.ms-color-btn.selected { border-color: var(--gray-800); }
+
+/* Milestone badge card */
+.ms-badge {
+    border-radius: 12px; padding: 16px 12px; text-align: center; position: relative;
+    cursor: grab; transition: box-shadow 0.2s, transform 0.15s;
+    user-select: none; min-width: 0;
+}
+.ms-badge:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.ms-badge.dragging { opacity: 0.5; transform: scale(0.95); }
+.ms-badge .ms-days { font-size: 36px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+.ms-badge .ms-label { font-size: 12px; opacity: 0.85; margin-bottom: 6px; }
+.ms-badge .ms-name { font-size: 15px; font-weight: 700; }
+.ms-badge .ms-detail { font-size: 11px; opacity: 0.7; margin-top: 3px; }
+.ms-badge .ms-resets { font-size: 11px; opacity: 0.6; margin-top: 6px; cursor: pointer; text-decoration: underline; }
+.ms-badge .ms-resets:hover { opacity: 1; }
+.ms-badge .ms-actions {
+    position: absolute; top: 6px; right: 6px; display: flex; gap: 3px; opacity: 0;
+    transition: opacity 0.2s;
+}
+.ms-badge:hover .ms-actions { opacity: 1; }
+.ms-badge .ms-actions button {
+    background: rgba(255,255,255,0.85); border: none; border-radius: 4px;
+    padding: 2px 5px; cursor: pointer; font-size: 11px; color: var(--gray-600);
+}
+.ms-badge .ms-actions button:hover { background: white; color: var(--gray-900); }
+
+/* Reset history */
+.ms-reset-entry {
+    border-left: 3px solid var(--gray-200); padding: 8px 12px; margin-bottom: 8px;
+    font-size: 13px; background: var(--gray-50); border-radius: 0 8px 8px 0;
+}
+.ms-reset-entry .ms-reset-date { font-weight: 600; color: var(--gray-700); }
+.ms-reset-entry .ms-reset-streak { color: var(--gray-500); font-size: 12px; }
+.ms-reset-entry .ms-reset-note { margin-top: 4px; color: var(--gray-600); font-style: italic; }

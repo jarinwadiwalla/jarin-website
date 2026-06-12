@@ -8,5 +8,49 @@
       "database_name": "jarin-site",
       "database_id": "1177de54-abce-43fb-98b2-3ef962fef544"
     }
-  ]
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SITE_KV",
+      "id": "76bd31f0f88548e1b058e24f564a2f20"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BLOG_IMAGES",
+      "bucket_name": "jarin-blog-images"
+    },
+    {
+      "binding": "AUDIO_BUCKET",
+      "bucket_name": "jarin-audio"
+    }
+  ],
+  // Preview deployments share production D1/KV/R2 so staging data matches production
+  "env": {
+    "preview": {
+      "d1_databases": [
+        {
+          "binding": "SITE_DB",
+          "database_name": "jarin-site",
+          "database_id": "1177de54-abce-43fb-98b2-3ef962fef544"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "SITE_KV",
+          "id": "76bd31f0f88548e1b058e24f564a2f20"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "BLOG_IMAGES",
+          "bucket_name": "jarin-blog-images"
+        },
+        {
+          "binding": "AUDIO_BUCKET",
+          "bucket_name": "jarin-audio"
+        }
+      ]
+    }
+  }
 }

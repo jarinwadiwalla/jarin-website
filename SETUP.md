@@ -104,3 +104,44 @@ Update the Cloudflare Access application domain from `jarin-website.pages.dev` t
 - **Blog publish fails:** Verify `GITHUB_TOKEN` is set and has `repo` scope
 - **Newsletter fails:** Verify `RESEND_API_KEY` is set and the sending domain is verified in Resend
 - **Guru page loads but no auth prompt:** Cloudflare Access isn't configured yet — see Step 6
+
+---
+
+## Guru v2 (June 2026): full dashboard port from bijan-john-website
+
+The guru dashboard was replaced with the full life-dashboard from the sibling
+`bijan-john-website` repo (rebranded for Jarin). The old single-file Astro page
+(`src/pages/guru/index.astro`) is gone; the dashboard is now static files in
+`public/guru/` (HTML + 16 JS modules + service worker PWA) talking to the
+Pages Functions in `functions/`.
+
+### What was set up automatically
+- **D1 migration** `schema/003-guru-port.sql` applied to the remote `jarin-site`
+  DB — additive only (14 new tables + new columns incl. `finances.groupTag`).
+  Existing data (300 finance rows, habits, subscribers, …) untouched.
+- **R2 buckets** created: `jarin-audio` (audio library, goldlist/translation
+  audio) and `jarin-blog-images`.
+- **KV namespace** created: `SITE_KV` (id `76bd31f0f88548e1b058e24f564a2f20`),
+  used by the `/api/health` check.
+- All bindings declared in `wrangler.jsonc` (production + preview) — they apply
+  on the next Pages deploy.
+- New dependency: `aws4fetch` (R2 presigned uploads in `/api/file-presign`).
+
+### Secrets (set via dashboard or `wrangler pages secret put <NAME> --project-name jarin-website`)
+| Secret | Used by | Status |
+|---|---|---|
+| `ADMIN_EMAIL` | new-subscriber + comment notifications | already set |
+| `UNSUBSCRIBE_SECRET` | unsubscribe link HMAC | already set |
+| `RESEND_API_KEY` | newsletter, goldlist email, intention digest | set if newsletter is live |
+| `OPENAI_API_KEY` | translation tab (Whisper transcription) | optional |
+| `ANTHROPIC_API_KEY` | translation tab (translation step) | optional |
+| `TURNSTILE_SECRET_KEY` | blog comment spam protection | optional |
+| `GITLAB_TOKEN` | blog publish pipeline (bijan used GitLab; this repo is GitHub — the Website tab's publish flow stays dormant until adapted) | n/a |
+
+### Notes
+- `/guru/` and `/api/` remain protected by Cloudflare Access (no change).
+- The old root service worker (`/sw.js`) is now a self-unregistering stub; the
+  new worker is scoped to `/guru/` (`public/guru/sw.js`). Bump `CACHE_NAME`
+  there when changing guru assets.
+- `/api/intention-digest` and `/api/publish-scheduled` are designed to be hit
+  by an external cron (e.g. GitHub Actions schedule) — not wired up yet.

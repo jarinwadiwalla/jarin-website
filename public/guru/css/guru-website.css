@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Guru Dashboard — Website Section
+   Blog editor, drafts, poems, preview pane
+   ========================================================================== */
+
+/* Editor layout */
+.editor-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.editor-pane, .preview-pane {
+    min-height: 400px;
+}
+
+.preview-pane {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 24px;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.preview-pane h1 { font-size: 28px; margin-bottom: 8px; color: var(--gray-900); }
+.preview-pane h2 { font-size: 22px; margin: 20px 0 8px; color: var(--gray-900); }
+.preview-pane h3 { font-size: 18px; margin: 16px 0 6px; color: var(--gray-900); }
+.preview-pane p { margin-bottom: 12px; color: var(--gray-700); font-size: 15px; line-height: 1.7; }
+.preview-pane img { max-width: 100%; border-radius: 8px; margin: 12px 0; }
+.preview-pane a { color: var(--primary); text-decoration: underline; }
+.preview-pane strong { font-weight: 700; }
+.preview-pane em { font-style: italic; }
+.preview-pane ul, .preview-pane ol { margin: 12px 0; padding-left: 24px; }
+.preview-pane li { margin-bottom: 4px; font-size: 15px; color: var(--gray-700); }
+.preview-pane blockquote {
+    border-left: 4px solid var(--primary);
+    padding: 12px 16px;
+    margin: 12px 0;
+    background: var(--light);
+    border-radius: 0 8px 8px 0;
+    color: var(--gray-700);
+    font-style: italic;
+}
+.preview-pane code {
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+}
+.preview-pane pre {
+    background: var(--gray-900);
+    color: #e5e7eb;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+.preview-pane pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+.preview-pane hr {
+    border: none;
+    border-top: 1px solid var(--gray-200);
+    margin: 20px 0;
+}
+
+.preview-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* Draft list */
+.draft-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.draft-item:hover {
+    border-color: var(--primary);
+    background: var(--light);
+}
+
+.draft-item .draft-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray-800);
+}
+
+.draft-item .draft-date {
+    font-size: 12px;
+    color: var(--gray-400);
+}
+
+/* Poem list items */
+.poem-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+.poem-item:hover { border-color: var(--gray-400); }
+.poem-item .poem-info { flex: 1; }
+.poem-item .poem-name { font-weight: 600; font-size: 15px; }
+.poem-item .poem-meta { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+/* Mode buttons — website */
+.web-mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.web-mode-btn:hover:not(.active) { background: var(--light); }

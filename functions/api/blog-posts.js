@@ -1,27 +1,18 @@
 /**
  * Cloudflare Pages Function — /api/blog-posts
  *
- * GET    → lists published blog posts (from GitHub) or fetches a single post by slug
- * DELETE → deletes a published blog post from GitHub
+ * GET  → lists published blog posts (from GitLab) or fetches a single post by slug
+ * DELETE → deletes a published blog post from GitLab
  *
  * Environment bindings required:
- *   - GITHUB_TOKEN (secret)
+ *   - GITLAB_TOKEN (secret)
  */
 
-const CORS_HEADERS = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-};
+import { jsonResponse, errorResponse } from '../lib/response.js';
 
-const GITHUB_REPO = "jarinwadiwalla/jarin-website";
-const GITHUB_API = "https://api.github.com";
+const GITLAB_PROJECT = "jarinwadiwalla%2Fjarin-website";
+const GITLAB_API = "https://gitlab.com/api/v4";
 const BRANCH = "main";
-
-const GITHUB_HEADERS = (token) => ({
-  Authorization: `Bearer ${token}`,
-  Accept: "application/vnd.github.v3+json",
-  "User-Agent": "jarin-website",
-});
 
 function parseFrontMatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/);
@@ -40,83 +31,64 @@ function parseFrontMatter(content) {
 
 export async function onRequestGet(context) {
   try {
-    const token = context.env.GITHUB_TOKEN;
+    const token = context.env.GITLAB_TOKEN;
     if (!token) {
-      return new Response(
-        JSON.stringify({ error: "GITHUB_TOKEN not configured." }),
-        { status: 500, headers: CORS_HEADERS }
-      );
+      return errorResponse("GITLAB_TOKEN not configured.");
     }
 
     const url = new URL(context.request.url);
     const slug = url.searchParams.get("slug");
 
     if (slug) {
-      const filePath = `blog/posts/${slug}.md`;
+      // Fetch single post content
+      const filePath = encodeURIComponent(`blog/posts/${slug}.md`);
       const res = await fetch(
-        `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}?ref=${BRANCH}`,
-        { headers: GITHUB_HEADERS(token) }
+        `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/files/${filePath}/raw?ref=${BRANCH}`,
+        { headers: { "PRIVATE-TOKEN": token } }
       );
       if (!res.ok) {
-        return new Response(
-          JSON.stringify({ error: "Post not found." }),
-          { status: 404, headers: CORS_HEADERS }
-        );
+        return errorResponse("Post not found.", 404);
       }
-      const file = await res.json();
-      const raw = decodeURIComponent(escape(atob(file.content)));
+      const raw = await res.text();
       const { meta, body } = parseFrontMatter(raw);
-      return new Response(
-        JSON.stringify({
-          post: {
-            slug: meta.slug || slug,
-            title: meta.title || "",
-            date: meta.date || "",
-            author: meta.author || "",
-            excerpt: meta.excerpt || "",
-            image: meta.image || "",
-            body,
-          },
-        }),
-        { status: 200, headers: CORS_HEADERS }
-      );
+      return jsonResponse({
+        post: {
+          slug: meta.slug || slug,
+          title: meta.title || "",
+          date: meta.date || "",
+          author: meta.author || "",
+          excerpt: meta.excerpt || "",
+          image: meta.image || "",
+          body,
+        },
+      });
     }
 
     // List all posts
     const res = await fetch(
-      `${GITHUB_API}/repos/${GITHUB_REPO}/contents/blog/posts?ref=${BRANCH}`,
-      { headers: GITHUB_HEADERS(token) }
+      `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/tree?path=blog/posts&per_page=100&ref=${BRANCH}`,
+      { headers: { "PRIVATE-TOKEN": token } }
     );
     if (!res.ok) {
-      // If directory doesn't exist yet, return empty list
-      if (res.status === 404) {
-        return new Response(
-          JSON.stringify({ posts: [] }),
-          { status: 200, headers: CORS_HEADERS }
-        );
-      }
-      return new Response(
-        JSON.stringify({ error: "Failed to list posts." }),
-        { status: 502, headers: CORS_HEADERS }
-      );
+      return errorResponse("Failed to list posts.", 502);
     }
 
     const files = await res.json();
     const mdFiles = files
-      .filter((f) => f.type === "file" && f.name.endsWith(".md"))
+      .filter((f) => f.type === "blob" && f.name.endsWith(".md"))
       .map((f) => f.name.replace(/\.md$/, ""));
 
+    // Fetch front matter for each post to get titles and dates
     const posts = await Promise.all(
       mdFiles.map(async (slug) => {
         try {
-          const filePath = `blog/posts/${slug}.md`;
+          const filePath = encodeURIComponent(`blog/posts/${slug}.md`);
           const r = await fetch(
-            `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}?ref=${BRANCH}`,
-            { headers: GITHUB_HEADERS(token) }
+            `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/files/${filePath}/raw?ref=${BRANCH}`,
+            { headers: { "PRIVATE-TOKEN": token } }
           );
           if (!r.ok) return { slug, title: slug, date: "" };
-          const file = await r.json();
-          const raw = decodeURIComponent(escape(atob(file.content)));
+          const raw = await r.text();
           const { meta } = parseFrontMatter(raw);
           return { slug, title: meta.title || slug, date: meta.date || "" };
         } catch {
@@ -127,97 +99,48 @@ export async function onRequestGet(context) {
 
     posts.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-    return new Response(
-      JSON.stringify({ posts }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ posts });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to fetch posts." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to fetch posts.");
   }
 }
 
 export async function onRequestDelete(context) {
   try {
-    const token = context.env.GITHUB_TOKEN;
+    const token = context.env.GITLAB_TOKEN;
     if (!token) {
-      return new Response(
-        JSON.stringify({ error: "GITHUB_TOKEN not configured." }),
-        { status: 500, headers: CORS_HEADERS }
-      );
+      return errorResponse("GITLAB_TOKEN not configured.");
     }
 
     const body = await context.request.json();
     const { slug } = body;
     if (!slug) {
-      return new Response(
-        JSON.stringify({ error: "Slug is required." }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return errorResponse("Slug is required.", 400);
     }
 
-    const filePath = `blog/posts/${slug}.md`;
-
-    // Get file SHA first
-    const checkRes = await fetch(
-      `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}?ref=${BRANCH}`,
-      { headers: GITHUB_HEADERS(token) }
-    );
-
-    if (!checkRes.ok) {
-      return new Response(
-        JSON.stringify({ error: "Post not found." }),
-        { status: 404, headers: CORS_HEADERS }
-      );
-    }
-
-    const existing = await checkRes.json();
-
+    const filePath = encodeURIComponent(`blog/posts/${slug}.md`);
     const res = await fetch(
-      `${GITHUB_API}/repos/${GITHUB_REPO}/contents/${filePath}`,
+      `${GITLAB_API}/projects/${GITLAB_PROJECT}/repository/files/${filePath}`,
       {
         method: "DELETE",
         headers: {
-          ...GITHUB_HEADERS(token),
+          "PRIVATE-TOKEN": token,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: `Delete blog post: ${slug}`,
-          sha: existing.sha,
           branch: BRANCH,
+          commit_message: `Delete blog post: ${slug}`,
         }),
       }
     );
 
     if (!res.ok) {
       const errBody = await res.text();
-      return new Response(
-        JSON.stringify({ error: "Failed to delete post.", details: errBody }),
-        { status: 502, headers: CORS_HEADERS }
-      );
+      return jsonResponse({ error: "Failed to delete post.", details: errBody }, 502);
     }
 
-    return new Response(
-      JSON.stringify({ ok: true, message: `Deleted blog post: ${slug}` }),
-      { status: 200, headers: CORS_HEADERS }
-    );
+    return jsonResponse({ ok: true, message: `Deleted blog post: ${slug}` });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Failed to delete post." }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return errorResponse("Failed to delete post.");
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
 }
