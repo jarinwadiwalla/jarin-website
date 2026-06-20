@@ -51,6 +51,8 @@ const ONLINE_ONLY = [
     '/api/sex',
     '/api/steps',
     '/api/steps-sync',
+    '/api/meals',
+    '/api/foods',
 ];
 
 function getReviewIntervalMs(distillation) {

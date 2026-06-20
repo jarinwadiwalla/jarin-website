@@ -33,6 +33,7 @@ const TAB_LOADERS = {
     workouts: () => { loadWorkouts(); },
     officework: () => { loadOfficeWork(); },
     intention: () => { loadIntention(); },
+    meals:    () => { loadMeals(); },
 };
 
 function switchTab(tabName) {
@@ -379,6 +380,7 @@ const NAV_GROUPS = {
         { id: 'calendar',   label: 'Calendar' },
         { id: 'habits',     label: 'Habits' },
         { id: 'workouts',   label: 'Health' },
+        { id: 'meals',      label: 'Meals' },
     ] },
     craft: { label: 'Craft', tabs: [
         { id: 'website',  label: 'Website' },
@@ -491,7 +493,7 @@ document.getElementById('cmdkOverlay').addEventListener('click', (e) => {
 
 // ==================== SWIPE BETWEEN TABS ====================
 // Mirrors the rail order (top to bottom): TODAY → CRAFT → LEARN → OPERATE.
-const TAB_ORDER = ['dashboard', 'intention', 'officework', 'calendar', 'website', 'media', 'comments', 'goldlist', 'translation', 'finances', 'tools'];
+const TAB_ORDER = ['dashboard', 'intention', 'officework', 'calendar', 'meals', 'website', 'media', 'comments', 'goldlist', 'translation', 'finances', 'tools'];
 let _swipeStartX = 0;
 let _swipeStartY = 0;
 

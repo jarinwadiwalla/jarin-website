@@ -1,6 +1,6 @@
-const CACHE_NAME = 'guru-vjarin-1.0.1';
+const CACHE_NAME = 'guru-vjarin-1.0.2';
 const AUDIO_CACHE = 'guru-audio-v1';
-const SHELL_URLS = ['/guru/', '/guru/js/guru-offline.js', '/guru/js/guru-core.js', '/guru/js/guru-dashboard.js', '/guru/js/guru-calendar.js', '/guru/js/guru-finances.js', '/guru/js/guru-goldlist.js', '/guru/js/guru-habits.js', '/guru/js/guru-workouts.js', '/guru/js/guru-media.js', '/guru/js/guru-office-work.js', '/guru/js/guru-header-timer.js', '/guru/js/guru-intention.js', '/guru/js/guru-tools.js', '/guru/js/guru-website.js', '/guru/js/guru-comments.js'];
+const SHELL_URLS = ['/guru/', '/guru/js/guru-offline.js', '/guru/js/guru-core.js', '/guru/js/guru-dashboard.js', '/guru/js/guru-calendar.js', '/guru/js/guru-finances.js', '/guru/js/guru-goldlist.js', '/guru/js/guru-habits.js', '/guru/js/guru-workouts.js', '/guru/js/guru-meals.js', '/guru/js/guru-media.js', '/guru/js/guru-office-work.js', '/guru/js/guru-header-timer.js', '/guru/js/guru-intention.js', '/guru/js/guru-tools.js', '/guru/js/guru-website.js', '/guru/js/guru-comments.js'];
 
 self.addEventListener('install', e => {
     e.waitUntil(

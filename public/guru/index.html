@@ -1890,6 +1890,7 @@
     <button class="top-tab-item" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button>
     <button class="top-tab-item" data-tab="habits" onclick="switchTab('habits')">Habits</button>
     <button class="top-tab-item" data-tab="workouts" onclick="switchTab('workouts')">Health</button>
+    <button class="top-tab-item" data-tab="meals" onclick="switchTab('meals')">Meals</button>
     <button class="top-tab-item" data-tab="website" onclick="switchTab('website')">Website</button>
     <button class="top-tab-item" data-tab="media" onclick="switchTab('media')">Media</button>
     <button class="top-tab-item" data-tab="comments" onclick="switchTab('comments')">Comments</button>
@@ -3587,6 +3588,120 @@
     </div>
 
 
+    <!-- ==================== MEALS ==================== -->
+    <div class="section" id="section-meals">
+        <div style="margin-bottom:16px;display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')">&larr; Dashboard</button>
+        </div>
+        <div class="card">
+            <h2>Meals</h2>
+            <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm meal-mode-btn active" data-mode="today"   onclick="switchMealView('today')">Today</button>
+                <button class="btn btn-secondary btn-sm meal-mode-btn" data-mode="library" onclick="switchMealView('library')">Food Library</button>
+                <button class="btn btn-secondary btn-sm meal-mode-btn" data-mode="trends"  onclick="switchMealView('trends')">Trends</button>
+            </div>
+
+            <datalist id="mealFoodList"></datalist>
+
+            <!-- ===== TODAY PANEL ===== -->
+            <div class="meal-panel" id="meal-panel-today">
+                <!-- Date pager -->
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="setMealDateOffset(-1)">&larr;</button>
+                    <input type="date" id="mealDateFilter" onchange="setMealDate(this.value)" style="padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;">
+                    <button class="btn btn-secondary btn-sm" onclick="setMealDateOffset(1)">&rarr;</button>
+                    <button class="btn btn-secondary btn-sm" onclick="setMealDate('')">Today</button>
+                </div>
+
+                <!-- Totals strip -->
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+                    <div class="stat-card" style="border-left:4px solid #10b981;"><div class="label">Calories</div><div class="value" id="mealTotCalories">0</div></div>
+                    <div class="stat-card" style="border-left:4px solid #ef4444;"><div class="label">Sugar</div><div class="value" id="mealTotSugar">0g</div></div>
+                    <div class="stat-card" style="border-left:4px solid #f59e0b;"><div class="label">Carbs</div><div class="value" id="mealTotCarbs">0g</div></div>
+                    <div class="stat-card" style="border-left:4px solid #3b82f6;"><div class="label">Protein</div><div class="value" id="mealTotProtein">0g</div></div>
+                </div>
+
+                <!-- Add / edit entry form -->
+                <div id="mealEntryForm" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px;margin-bottom:18px;">
+                    <h3 style="font-size:14px;margin:0 0 10px;color:var(--gray-700);">Log a Meal Entry</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;align-items:end;">
+                        <label style="font-size:12px;color:var(--gray-600);">Date
+                            <input type="date" id="mealDate" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Time
+                            <input type="time" id="mealTime" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Meal
+                            <select id="mealType" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                                <option value="">— pick —</option>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snack">Snack</option>
+                            </select>
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Food
+                            <select id="mealFood" onchange="onMealFoodChange()" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                                <option value="">— select food —</option>
+                            </select>
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Grams
+                            <input type="number" id="mealGrams" step="1" min="0" placeholder="100" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Mood
+                            <input type="text" id="mealMood" placeholder="energized, sluggish..." style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);grid-column:span 2;">Notes
+                            <input type="text" id="mealNotes" placeholder="how it sat with you, cravings, context..." style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn btn-primary btn-sm" id="mealSaveBtn" onclick="saveMealEntry()">Log Entry</button>
+                            <button class="btn btn-secondary btn-sm" onclick="clearMealForm()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mealTodayList"></div>
+            </div>
+
+            <!-- ===== LIBRARY PANEL ===== -->
+            <div class="meal-panel" id="meal-panel-library" style="display:none;">
+                <div id="foodForm" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px;margin-bottom:18px;">
+                    <h3 style="font-size:14px;margin:0 0 10px;color:var(--gray-700);">Add / Edit a Food <span style="font-weight:400;color:var(--gray-500);font-size:12px;">(values per 100g)</span></h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:end;">
+                        <label style="font-size:12px;color:var(--gray-600);grid-column:span 2;">Name
+                            <input type="text" id="foodName" placeholder="e.g. Greek Yogurt" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Calories
+                            <input type="number" id="foodCalories" step="0.1" min="0" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Sugar (g)
+                            <input type="number" id="foodSugar" step="0.1" min="0" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Carbs (g)
+                            <input type="number" id="foodCarbs" step="0.1" min="0" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <label style="font-size:12px;color:var(--gray-600);">Protein (g)
+                            <input type="number" id="foodProtein" step="0.1" min="0" style="display:block;width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--gray-200);border-radius:6px;margin-top:2px;">
+                        </label>
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn btn-primary btn-sm" id="foodSaveBtn" onclick="saveFood()">Add Food</button>
+                            <button class="btn btn-secondary btn-sm" onclick="clearFoodForm()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="foodLibraryList"></div>
+            </div>
+
+            <!-- ===== TRENDS PANEL ===== -->
+            <div class="meal-panel" id="meal-panel-trends" style="display:none;">
+                <div id="mealTrendsContent"></div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- ==================== WORKOUTS ==================== -->
     <div class="section" id="section-workouts">
         <div style="margin-bottom:16px;display:flex;gap:8px;">
@@ -4459,6 +4574,7 @@
 <script src="/guru/js/guru-goldlist.js"></script>
 <script src="/guru/js/guru-habits.js"></script>
 <script src="/guru/js/guru-workouts.js"></script>
+<script src="/guru/js/guru-meals.js"></script>
 <script src="/guru/js/guru-media.js"></script>
 <script src="/guru/js/guru-office-work.js"></script>
 <script src="/guru/js/guru-header-timer.js"></script>
