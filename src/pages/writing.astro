@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubstackSubscribe from '../components/SubstackSubscribe.astro';
+import { getSubstackPosts, SUBSTACK_URL } from '../lib/substack.js';
+
+const posts = await getSubstackPosts(9);
+---
+
+<BaseLayout title="Writing" description="Essays and reflections from Jarin Wadiwalla on sound healing, grief, and the lifelong unfolding of the human spirit.">
+  <!-- Spacer for fixed nav -->
+  <div class="pt-20"></div>
+
+  <section class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="text-4xl md:text-5xl text-warm-800 text-center mb-4 italic">
+        Writing
+      </h1>
+      <p class="text-center font-body text-warm-600 mb-2">Reflections from my Substack.</p>
+      <div class="w-24 h-px bg-warm-300 mx-auto mb-16"></div>
+
+      {posts.length > 0 ? (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {posts.map((post) => (
+            <a
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex flex-col bg-white/60 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            >
+              {post.image && (
+                <div class="aspect-[3/2] overflow-hidden">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    loading="lazy"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              )}
+              <div class="p-6 flex flex-col gap-2">
+                {post.date && (
+                  <span class="font-body text-xs tracking-widest uppercase text-warm-400">{post.date}</span>
+                )}
+                <h2 class="text-xl text-warm-800 group-hover:text-warm-900 leading-snug">{post.title}</h2>
+                {post.description && (
+                  <p class="font-body text-warm-600 text-sm leading-relaxed">{post.description}</p>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center font-body text-warm-600">
+          New writing is on its way. Read along on
+          <a href={SUBSTACK_URL} target="_blank" rel="noopener noreferrer" class="underline hover:text-warm-800">Substack</a>.
+        </p>
+      )}
+    </div>
+  </section>
+
+  <!-- Subscribe -->
+  <section class="py-20 px-6 bg-warm-100 border-t border-warm-200/50">
+    <div class="max-w-xl mx-auto text-center flex flex-col items-center">
+      <SubstackSubscribe heading="Subscribe for new essays in your inbox." />
+    </div>
+  </section>
+</BaseLayout>

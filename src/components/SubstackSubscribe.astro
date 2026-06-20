@@ -1,0 +1,28 @@
+---
+import { SUBSTACK_URL } from '../lib/substack.js';
+
+interface Props {
+  heading?: string;
+  dark?: boolean;
+}
+
+const { heading = "Sign-up for news that's good for the soul.", dark = false } = Astro.props;
+---
+
+<div>
+  <h3 class:list={['text-xl mb-4', dark ? 'text-white' : 'text-warm-800']}>
+    {heading}
+  </h3>
+  <div class="rounded-md overflow-hidden bg-white shadow-sm inline-block max-w-full">
+    <iframe
+      src={`${SUBSTACK_URL}/embed`}
+      width="480"
+      height="150"
+      style="border:0; background:white; width:100%; max-width:480px;"
+      frameborder="0"
+      scrolling="no"
+      title="Subscribe on Substack"
+      loading="lazy"
+    ></iframe>
+  </div>
+</div>
