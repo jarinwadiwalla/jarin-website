@@ -9,20 +9,47 @@ interface Props {
 const { heading = "Sign-up for news that's good for the soul.", dark = false } = Astro.props;
 ---
 
-<div>
-  <h3 class:list={['text-xl mb-4', dark ? 'text-white' : 'text-warm-800']}>
+<div class="w-full">
+  <h3 class:list={['text-2xl md:text-[1.7rem] italic tracking-wide text-center mb-2', dark ? 'text-white' : 'text-warm-800']}>
     {heading}
   </h3>
-  <div class="rounded-md overflow-hidden bg-white shadow-sm inline-block max-w-full">
-    <iframe
-      src={`${SUBSTACK_URL}/embed`}
-      width="480"
-      height="150"
-      style="border:0; background:white; width:100%; max-width:480px;"
-      frameborder="0"
-      scrolling="no"
-      title="Subscribe on Substack"
-      loading="lazy"
-    ></iframe>
-  </div>
+  <div class="w-12 h-px bg-warm-300/70 mx-auto mb-7"></div>
+
+  <form
+    class="substack-subscribe flex items-center gap-2 w-full rounded-full border border-warm-200 bg-white/80 backdrop-blur-sm pl-5 pr-1.5 py-1.5 shadow-[0_6px_28px_rgba(120,90,60,0.08)] transition-all duration-300 focus-within:border-warm-300 focus-within:shadow-[0_8px_34px_rgba(120,90,60,0.16)]"
+    action={`${SUBSTACK_URL}/api/v1/free?nojs=true`}
+    method="post"
+    target="substack-sink"
+  >
+    <img src="/images/lotus-icon.png" alt="" aria-hidden="true" class="h-6 w-auto opacity-80 shrink-0" />
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="Your email address"
+      class="flex-1 min-w-0 bg-transparent px-1 py-1.5 font-body text-sm tracking-wide text-warm-800 placeholder:text-warm-400 focus:outline-none"
+    />
+    <input type="hidden" name="source" value="website-footer" />
+    <button
+      type="submit"
+      class="shrink-0 px-8 py-2.5 bg-warm-700 text-white font-body text-xs tracking-[0.2em] uppercase rounded-full hover:bg-warm-800 transition-colors duration-300"
+    >
+      Subscribe
+    </button>
+  </form>
+
+  <iframe name="substack-sink" title="" aria-hidden="true" tabindex="-1" class="hidden"></iframe>
+  <p class:list={['substack-msg font-body text-sm text-center mt-3 min-h-[1.25rem]', dark ? 'text-white/80' : 'text-warm-500']}></p>
 </div>
+
+<script>
+  document.querySelectorAll('.substack-subscribe').forEach((form) => {
+    const msg = form.parentElement?.querySelector('.substack-msg');
+    form.addEventListener('submit', () => {
+      // The native POST is sent into the hidden iframe; show our own confirmation.
+      if (msg) msg.textContent = 'Almost there — check your inbox to confirm your subscription.';
+      const input = form.querySelector('input[type="email"]') as HTMLInputElement | null;
+      window.setTimeout(() => { if (input) input.value = ''; }, 400);
+    });
+  });
+</script>

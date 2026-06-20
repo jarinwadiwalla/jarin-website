@@ -1,46 +1,73 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
+
+const pillars = [
+  {
+    href: 'https://ombakway.com',
+    label: 'Sound',
+    desc: 'Acutonics vibrational sound therapy — like acupuncture but with activated tuning forks. Needle-free, effective, grounding.',
+  },
+  {
+    href: 'https://www.wavesofgrief.org/registration',
+    label: 'Community',
+    desc: 'Monthly grief circles on the shore with the Waves of Grief Collective.',
+  },
+  {
+    href: 'https://montessoriforadolescents.com',
+    label: 'Education',
+    desc: 'Practical resources and support to open Montessori Adolescent centers worldwide.',
+  },
+];
 ---
 
 <BaseLayout title="Home">
-  <Hero
-    image="/images/hero-home.jpg"
-    imageAlt="Jarin Wadiwalla — sound healing and wellness"
-    video="/images/lotus.mp4"
-    title="Support for the lifelong unfolding of the human spirit"
-  />
+  <section class="relative min-h-screen w-full overflow-hidden bg-warm-900">
+    <!-- Full-screen background video -->
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      poster="/images/hero-home.jpg"
+      class="absolute inset-0 w-full h-full object-cover"
+    >
+      <source src="/images/lotus.mp4" type="video/mp4" />
+    </video>
 
+    <!-- Elegant gradient overlay for depth + contrast -->
+    <div class="absolute inset-0 bg-gradient-to-b from-warm-900/55 via-warm-900/20 to-warm-900/75"></div>
 
-  <!-- Three pillars -->
-  <section class="-mt-32 relative z-10 py-24 px-6 bg-white/40 backdrop-blur-sm">
-    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-12 text-center">
+    <!-- Content -->
+    <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pt-32 pb-24 text-center">
+      <h1 class="text-white text-3xl md:text-5xl lg:text-6xl leading-tight italic max-w-4xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+        Support for the lifelong unfolding of the human spirit
+      </h1>
+      <div class="w-24 h-px bg-white/50 mx-auto mt-8 mb-14 md:mb-16"></div>
 
-      <a href="https://ombakway.com" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-4 hover:opacity-80 transition-opacity">
-        <img src="/images/lotus-icon.png" alt="" aria-hidden="true" class="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity" />
-        <h2 class="text-2xl text-warm-800">Sound</h2>
-        <p class="font-body text-warm-600 text-sm leading-relaxed">
-          Acutonics vibrational sound therapy — like acupuncture but with activated tuning forks. Needle-free, effective, grounding.
-        </p>
-      </a>
-
-      <a href="https://www.wavesofgrief.org/registration" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-4 hover:opacity-80 transition-opacity">
-        <img src="/images/lotus-icon.png" alt="" aria-hidden="true" class="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity" />
-        <h2 class="text-2xl text-warm-800">Community</h2>
-        <p class="font-body text-warm-600 text-sm leading-relaxed">
-          Monthly grief circles on the shore with the Waves of Grief Collective.
-        </p>
-      </a>
-
-      <a href="https://montessoriforadolescents.com" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-4 hover:opacity-80 transition-opacity">
-        <img src="/images/lotus-icon.png" alt="" aria-hidden="true" class="h-12 w-auto opacity-70 group-hover:opacity-100 transition-opacity" />
-        <h2 class="text-2xl text-warm-800">Education</h2>
-        <p class="font-body text-warm-600 text-sm leading-relaxed">
-          Practical resources and support to open Montessori Adolescent centers worldwide.
-        </p>
-      </a>
-
+      <!-- Three lotus pillars — overlaid, raised, enlarged -->
+      <div class="w-full max-w-5xl grid md:grid-cols-3 gap-12 md:gap-10">
+        {pillars.map((p) => (
+          <a
+            href={p.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex flex-col items-center gap-5"
+          >
+            <img
+              src="/images/lotus-icon.png"
+              alt=""
+              aria-hidden="true"
+              class="h-20 md:h-24 w-auto drop-shadow-[0_4px_14px_rgba(0,0,0,0.4)] transition-all duration-500 ease-out opacity-95 group-hover:opacity-100 group-hover:scale-110 group-hover:-translate-y-1"
+            />
+            <h2 class="text-2xl md:text-3xl text-white tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              {p.label}
+            </h2>
+            <p class="font-body text-sm leading-relaxed text-white/85 max-w-xs drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+              {p.desc}
+            </p>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
-
 </BaseLayout>
