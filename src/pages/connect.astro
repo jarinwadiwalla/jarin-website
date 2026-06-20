@@ -8,23 +8,15 @@ import ContactForm from '../components/ContactForm.astro';
   <Hero
     image="/images/contact-hero.jpg"
     imageAlt="Connect with Jarin Wadiwalla"
-  >
-    <div class="relative z-10 text-center px-6 max-w-3xl">
-      <h1 class="text-4xl md:text-6xl text-white leading-tight mb-4 italic drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)]">
-        Connect
-      </h1>
-      <p class="font-body text-lg text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
-        Support for the lifelong unfolding of the human spirit.
-      </p>
-    </div>
-  </Hero>
+    overlay={false}
+  />
 
   <!-- Contact form -->
   <section class="py-24 px-6 bg-warm-50">
     <div class="max-w-2xl mx-auto">
       <div class="text-center mb-12">
         <img src="/images/lotus-icon.png" alt="" aria-hidden="true" class="h-12 w-auto mx-auto mb-5 opacity-80" />
-        <h2 class="text-3xl md:text-4xl italic text-warm-800 mb-3">Get in Touch</h2>
+        <h2 class="text-5xl md:text-6xl italic text-warm-800 mb-3">Get in Touch</h2>
         <p class="font-body text-warm-600 max-w-md mx-auto leading-relaxed">
           Whether you're drawn to sound, to circle, or simply curious — I'd love to hear from you.
         </p>
