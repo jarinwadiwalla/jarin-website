@@ -17,107 +17,132 @@ const images = files.map((f) => `/images/carousel/${encodeURIComponent(f)}`);
 ---
 
 {images.length > 0 && (
-  <section class="relative w-full bg-warm-900">
-    <div id="carousel" class="carousel relative w-full h-[60vh] md:h-[82vh] overflow-hidden">
-      {images.map((src, i) => (
-        <img
-          src={src}
-          alt=""
-          loading={i === 0 ? 'eager' : 'lazy'}
-          class="carousel-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ease-in-out"
-          style={`opacity:${i === 0 ? 1 : 0}`}
-          data-index={i}
-        />
-      ))}
-
-      <!-- subtle edge vignette for control legibility -->
-      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-warm-900/30 via-transparent to-warm-900/10"></div>
-
+  <section class="w-full bg-warm-50 py-16 md:py-24">
+    <div class="relative max-w-6xl mx-auto px-6 md:px-14">
       {images.length > 1 && (
         <>
           <button
-            class="carousel-prev group absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-10 grid place-items-center w-11 h-11 rounded-full bg-white/15 backdrop-blur-sm text-white text-2xl hover:bg-white/30 transition"
-            aria-label="Previous photo"
+            class="strip-prev absolute left-1 md:left-3 top-1/2 -translate-y-1/2 z-10 grid place-items-center w-11 h-11 rounded-full bg-white text-warm-700 text-2xl shadow-md hover:bg-warm-100 transition"
+            aria-label="Previous photos"
           >
             <span class="-mt-0.5">&lsaquo;</span>
           </button>
           <button
-            class="carousel-next group absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-10 grid place-items-center w-11 h-11 rounded-full bg-white/15 backdrop-blur-sm text-white text-2xl hover:bg-white/30 transition"
-            aria-label="Next photo"
+            class="strip-next absolute right-1 md:right-3 top-1/2 -translate-y-1/2 z-10 grid place-items-center w-11 h-11 rounded-full bg-white text-warm-700 text-2xl shadow-md hover:bg-warm-100 transition"
+            aria-label="Next photos"
           >
             <span class="-mt-0.5">&rsaquo;</span>
           </button>
-
-          <div class="carousel-dots absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2.5">
-            {images.map((_, i) => (
-              <button class="carousel-dot" data-index={i} aria-label={`Go to photo ${i + 1}`}></button>
-            ))}
-          </div>
         </>
       )}
+
+      <div class="strip flex gap-4 md:gap-5 overflow-x-auto scroll-smooth snap-x no-scrollbar py-2">
+        {images.map((src, i) => (
+          <button
+            class="strip-item snap-start shrink-0 w-44 md:w-56 aspect-[3/4] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group"
+            data-index={i}
+            aria-label={`Enlarge photo ${i + 1}`}
+          >
+            <img
+              src={src}
+              alt=""
+              loading="lazy"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox fixed inset-0 z-[100] hidden items-center justify-center bg-black/85 backdrop-blur-sm p-4 md:p-10">
+      <button class="lightbox-close absolute top-5 right-6 text-white/80 hover:text-white text-4xl leading-none" aria-label="Close">&times;</button>
+      <button class="lightbox-prev absolute left-4 md:left-8 text-white/80 hover:text-white text-5xl leading-none" aria-label="Previous">&lsaquo;</button>
+      <img class="lightbox-img max-h-[88vh] max-w-[92vw] rounded-xl object-contain shadow-2xl" src="" alt="" />
+      <button class="lightbox-next absolute right-4 md:right-8 text-white/80 hover:text-white text-5xl leading-none" aria-label="Next">&rsaquo;</button>
     </div>
   </section>
 )}
 
 <style>
-  .carousel-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.5);
-    transition: width 0.4s ease, background 0.4s ease;
-  }
-  .carousel-dot.is-active {
-    width: 26px;
-    background: #fff;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLElement>('.carousel').forEach((root) => {
-    const slides = Array.from(root.querySelectorAll<HTMLElement>('.carousel-slide'));
-    const dots = Array.from(root.querySelectorAll<HTMLElement>('.carousel-dot'));
-    if (slides.length < 2) {
-      dots[0]?.classList.add('is-active');
-      return;
-    }
+  document.querySelectorAll<HTMLElement>('section:has(.strip)').forEach((root) => {
+    const strip = root.querySelector<HTMLElement>('.strip');
+    if (!strip) return;
+    const items = Array.from(strip.querySelectorAll<HTMLElement>('.strip-item'));
+    const srcs = items.map((it) => it.querySelector('img')?.src || '');
 
-    let current = 0;
+    const step = () => {
+      const first = items[0];
+      if (!first) return 240;
+      const gap = parseFloat(getComputedStyle(strip).columnGap || '20') || 20;
+      return first.offsetWidth + gap;
+    };
+
+    // Arrows
+    root.querySelector('.strip-next')?.addEventListener('click', () => {
+      strip.scrollBy({ left: step(), behavior: 'smooth' });
+      restart();
+    });
+    root.querySelector('.strip-prev')?.addEventListener('click', () => {
+      strip.scrollBy({ left: -step(), behavior: 'smooth' });
+      restart();
+    });
+
+    // Slow auto-advance
     let timer: number | undefined;
+    let paused = false;
+    const tick = () => {
+      if (paused) return;
+      const atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+      if (atEnd) strip.scrollTo({ left: 0, behavior: 'smooth' });
+      else strip.scrollBy({ left: step(), behavior: 'smooth' });
+    };
+    const start = () => { if (items.length > 1) timer = window.setInterval(tick, 3500); };
+    const stop = () => { if (timer) window.clearInterval(timer); };
+    const restart = () => { stop(); start(); };
 
-    const show = (n: number) => {
-      current = (n + slides.length) % slides.length;
-      slides.forEach((s, k) => (s.style.opacity = k === current ? '1' : '0'));
-      dots.forEach((d, k) => d.classList.toggle('is-active', k === current));
+    strip.addEventListener('mouseenter', () => (paused = true));
+    strip.addEventListener('mouseleave', () => (paused = false));
+
+    // Lightbox
+    const lightbox = root.querySelector<HTMLElement>('.lightbox');
+    const lbImg = root.querySelector<HTMLImageElement>('.lightbox-img');
+    let lbIndex = 0;
+
+    const openLightbox = (i: number) => {
+      lbIndex = i;
+      if (lbImg) lbImg.src = srcs[i];
+      lightbox?.classList.remove('hidden');
+      lightbox?.classList.add('flex');
+      paused = true;
+    };
+    const closeLightbox = () => {
+      lightbox?.classList.add('hidden');
+      lightbox?.classList.remove('flex');
+      paused = false;
+    };
+    const lbShow = (i: number) => {
+      lbIndex = (i + srcs.length) % srcs.length;
+      if (lbImg) lbImg.src = srcs[lbIndex];
     };
 
-    const start = () => {
-      stop();
-      timer = window.setInterval(() => show(current + 1), 5500);
-    };
-    const stop = () => {
-      if (timer) window.clearInterval(timer);
-    };
-
-    root.querySelector('.carousel-next')?.addEventListener('click', () => {
-      show(current + 1);
-      start();
+    items.forEach((it, i) => it.addEventListener('click', () => openLightbox(i)));
+    root.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
+    root.querySelector('.lightbox-next')?.addEventListener('click', (e) => { e.stopPropagation(); lbShow(lbIndex + 1); });
+    root.querySelector('.lightbox-prev')?.addEventListener('click', (e) => { e.stopPropagation(); lbShow(lbIndex - 1); });
+    lightbox?.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', (e) => {
+      if (lightbox?.classList.contains('hidden')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') lbShow(lbIndex + 1);
+      if (e.key === 'ArrowLeft') lbShow(lbIndex - 1);
     });
-    root.querySelector('.carousel-prev')?.addEventListener('click', () => {
-      show(current - 1);
-      start();
-    });
-    dots.forEach((d) =>
-      d.addEventListener('click', () => {
-        show(Number(d.dataset.index));
-        start();
-      })
-    );
 
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-
-    show(0);
     start();
   });
 </script>
