@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Carousel from '../components/Carousel.astro';
 
 const pillars = [
   {
@@ -8,7 +9,7 @@ const pillars = [
     desc: 'Acutonics vibrational sound therapy — like acupuncture but with activated tuning forks. Needle-free, effective, grounding.',
   },
   {
-    href: 'https://www.wavesofgrief.org/registration',
+    href: 'https://www.wavesofgrief.org/second-sunday-drop-ins',
     label: 'Community',
     desc: 'Monthly grief circles on the shore with the Waves of Grief Collective.',
   },
@@ -70,4 +71,6 @@ const pillars = [
       </div>
     </div>
   </section>
+
+  <Carousel />
 </BaseLayout>
